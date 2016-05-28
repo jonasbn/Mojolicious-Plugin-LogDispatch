@@ -36,9 +36,6 @@ __PACKAGE__->attr(
         my $self = shift;
                 my $dispatcher;
 
-                $self->path('/tmp/logging.log');
-                $self->level('warning');
-
                 if ($self->callbacks)
                 {
                         
