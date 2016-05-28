@@ -34,45 +34,47 @@ sub register {
 __PACKAGE__->attr(
     'handle' => sub {
         my $self = shift;
-                my $dispatcher;
+        my $dispatcher;
 
-                if ($self->callbacks)
-                {
-                        
-                         $dispatcher = Log::Dispatch->new(callbacks => $self->callbacks);      
-                }
-                else
-                {
-                        
-                        $dispatcher = Log::Dispatch->new(@_);
-                }
-                 
-                if ($self->path)
-                {
-        
-                         $dispatcher->add(Log::Dispatch::File->new( 'name'      => '_default_log_obj',
-                                                                            'min_level' => $self->level,
-                                                                            'filename'  => $self->path,
-                                                                            'mode'      => 'append' )
-                                                                                                );                         
-                         
-                }
-                else
-                {
-        
-                        # Create a logging object that will log to STDERR by default
-                        $dispatcher->add(Log::Dispatch::Screen->new(      'name'      => '_default_log_obj',
-                                                                                'min_level' => $self->level,
-                                                                                'stderr'    => 1 )
-                                                                                                        );              
-                }
+        if ( $self->callbacks ) {
 
-                return $dispatcher;
+            $dispatcher = Log::Dispatch->new( callbacks => $self->callbacks );
+        }
+        else {
+
+            $dispatcher = Log::Dispatch->new(@_);
+        }
+
+        if ( $self->path ) {
+
+            $dispatcher->add(
+                Log::Dispatch::File->new(
+                    'name'      => '_default_log_obj',
+                    'min_level' => $self->level,
+                    'filename'  => $self->path,
+                    'mode'      => 'append'
+                )
+            );
+
+        }
+        else {
+
+            # Create a logging object that will log to STDERR by default
+            $dispatcher->add(
+                Log::Dispatch::Screen->new(
+                    'name'      => '_default_log_obj',
+                    'min_level' => $self->level,
+                    'stderr'    => 1
+                )
+            );
+        }
+
+        return $dispatcher;
     }
 );
- 
+
 __PACKAGE__->attr('callbacks');
-__PACKAGE__->attr('remove_default_log_obj' => 1);
+__PACKAGE__->attr( 'remove_default_log_obj' => 1 );
 
 #some methods from Log::Dispatch
 sub add {
@@ -112,7 +114,7 @@ sub critical  { shift->log( 'critical',  @_ ) }
 sub warning   { shift->log( 'warning',   @_ ) }
 sub warn      { shift->log( 'warning',   @_ ) }
 sub notice    { shift->log( 'notice',    @_ ) }
-sub debug    { shift->log( 'debug',    @_ ) }
+sub debug     { shift->log( 'debug',     @_ ) }
 
 #short alias syslog style
 sub err   { shift->log( 'error',     @_ ) }
@@ -138,7 +140,7 @@ sub is_err       { shift->is_level('error') }
 sub is_crit      { shift->is_level('critical') }
 sub is_emerg     { shift->is_level('emergency') }
 sub is_debug     { shift->is_level('debug') }
-sub is_info     { shift->is_level('info') }
+sub is_info      { shift->is_level('info') }
 sub is_error     { shift->is_level('error') }
 1;
 
