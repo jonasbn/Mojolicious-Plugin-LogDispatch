@@ -75,23 +75,23 @@ sub is_emerg     { shift->is_level('emergency') }
 
 =head1 NAME
 
-Mojolicious::Plugin::MyPlugin - Mojolicious Plugin
+Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
 =head1 SYNOPSIS
 
   # Mojolicious
-  $self->plugin('MyPlugin');
+  $self->plugin('LogDispatch');
 
   # Mojolicious::Lite
-  plugin 'MyPlugin';
+  plugin 'LogDispatch';
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::MyPlugin> is a L<Mojolicious> plugin.
+L<Mojolicious::Plugin::LogDispatch> is a L<Mojolicious> plugin.
 
 =head1 METHODS
 
-L<Mojolicious::Plugin::MyPlugin> inherits all methods from
+L<Mojolicious::Plugin::LogDispatch> inherits all methods from
 L<Mojolicious::Plugin> and implements the following new ones.
 
 =head2 register
