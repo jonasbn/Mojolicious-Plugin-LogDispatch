@@ -176,10 +176,6 @@ Register plugin in L<Mojolicious> application.
 
 =head1 SEE ALSO
 
-, , 
-
-=head1 SEE ALSO
-
 =over
 
 =item L<Mojolicious>
