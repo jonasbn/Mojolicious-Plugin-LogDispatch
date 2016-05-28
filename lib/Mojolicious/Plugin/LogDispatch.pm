@@ -102,6 +102,34 @@ Register plugin in L<Mojolicious> application.
 
 =head1 SEE ALSO
 
-L<Mojolicious>, L<Mojolicious::Guides>, L<http://mojolicio.us>.
+, , 
+
+=head1 SEE ALSO
+
+=over
+
+=item L<Mojolicious>
+
+=item L<Mojolicious::Guides>
+
+=item L<http://mojolicio.us>.
+
+=item L<Log::Dispatch>
+
+=item L<MojoX::Log::Dispatch>
+
+=back
+
+=head1 AUTHOR
+
+Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
+
+=head1 LICENSE AND COPYRIGHT
+
+Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
+
+Mojolicious-Plugin-LogDispatch is released under the Artistic License 2.0
+
+=cut
 
 =cut

@@ -27,4 +27,22 @@ Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) applicati
 
 # SEE ALSO
 
-[Mojolicious](https://metacpan.org/pod/Mojolicious), [Mojolicious::Guides](https://metacpan.org/pod/Mojolicious::Guides), [http://mojolicio.us](http://mojolicio.us).
+, , 
+
+# SEE ALSO
+
+- [Mojolicious](https://metacpan.org/pod/Mojolicious)
+- [Mojolicious::Guides](https://metacpan.org/pod/Mojolicious::Guides)
+- [http://mojolicio.us](http://mojolicio.us).
+- [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
+- [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch)
+
+# AUTHOR
+
+Jonas B. Nielsen, (jonasbn) - `<jonasbn@cpan.org>`
+
+# LICENSE AND COPYRIGHT
+
+Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
+
+Mojolicious-Plugin-LogDispatch is released under the Artistic License 2.0
