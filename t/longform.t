@@ -7,7 +7,7 @@ use Test::Mojo;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-plugin 'LogDispatch';
+plugin 'Mojolicious::Plugin::LogDispatch';
 
 get '/' => sub {
   my $self = shift;
