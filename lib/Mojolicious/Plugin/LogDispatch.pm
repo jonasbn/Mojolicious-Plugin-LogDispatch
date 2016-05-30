@@ -9,56 +9,74 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 
+use Env qw($MOJO_MODE);
+
 our $VERSION = '0.01';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
 
-    # Adding "log" helper
-    $app->helper(
-        log => sub {
-            my ( $self, $level, @msgs ) = @_;
+    $app->log->info('Registering Mojolicious::Plugin::LogDispatch');
+    # print STDERR "MOTHER FUCKER!\n";
+    # print STDERR $MOJO_MODE;
 
-            # Check log level
-            $level = lc $level;
-            return $self unless $level && $self->is_level($level);
+    # # Adding "log" helper
+    # $app->helper(
+    #     log => sub {
+    #         my ( $self, $level, @msgs ) = @_;
 
-            # We define a default log handle until told otherwise
-            $self->handle->log( 'level' => $level, 'message' => @msgs );
+    #         print STDERR "We got called\n";
 
-            return $self;
-        }
-    );
+    #         # Check log level
+    #         $level = lc $level;
+    #         return $self unless $level && $self->is_level($level);
+
+    #         # We define a default log handle until told otherwise
+    #         $self->handle->log( 'level' => $level, 'message' => @msgs );
+
+    #         return $self;
+    #     }
+    # );
+
+    my $path = $app->log->path;
+
+    if ($path) {
+        $app->log->info("Resolved path: $path");
+        $self->path($path);
+    }
+
+    my $log = $self->handle();
+    $app->log($log);
+
+    return;
 }
 
 __PACKAGE__->attr(
     'handle' => sub {
         my $self = shift;
+
         my $dispatcher;
 
         if ( $self->callbacks ) {
-
             $dispatcher = Log::Dispatch->new( callbacks => $self->callbacks );
         }
         else {
-
             $dispatcher = Log::Dispatch->new(@_);
         }
 
         if ( $self->path ) {
-
+            # Create a logging object that will log to a file if we have a path
             $dispatcher->add(
                 Log::Dispatch::File->new(
                     'name'      => '_default_log_obj',
                     'min_level' => $self->level,
                     'filename'  => $self->path,
+                    'newlines'  => 1,
                     'mode'      => 'append'
                 )
             );
-
         }
         else {
-
             # Create a logging object that will log to STDERR by default
             $dispatcher->add(
                 Log::Dispatch::Screen->new(
@@ -81,8 +99,9 @@ sub add {
     my $self = shift;
     my $l    = $self->handle->add(@_);
 
-    #remove default log object that log to STDERR?
+    # Remove default log object that log to STDERR?
     $self->remove('_default_log_obj') if $self->remove_default_log_obj;
+
     return $l;
 }
 
@@ -142,7 +161,12 @@ sub is_emerg     { shift->is_level('emergency') }
 sub is_debug     { shift->is_level('debug') }
 sub is_info      { shift->is_level('info') }
 sub is_error     { shift->is_level('error') }
+
 1;
+
+__END__
+
+=pod
 
 =encoding utf8
 
@@ -194,6 +218,9 @@ Register plugin in L<Mojolicious> application.
 Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 LICENSE AND COPYRIGHT
+
+The implementation is derived from MojoX::Log::Dispatch which is no longer 
+supported
 
 Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
 

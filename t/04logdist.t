@@ -15,7 +15,7 @@ use Log::Dispatch::Screen;
 
 use IO::File;
 
-my $tempdir = tempdir( CLEANUP => 0 );
+my $tempdir = '/tmp'; #tempdir( CLEANUP => 0 );
 
 diag "Using temporary directory: $tempdir\n";
 
@@ -51,7 +51,7 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
 
     $dispatch->add( Log::Dispatch::File->new( name => 'warning_file1',
                                               min_level => 'warning',
-                                              filename => '/tmp/logging.log' ) );
+                                              filename => $warning_log ) );
 
     ok( $dispatch->is_warning, "ok is_warning");
     ok( $dispatch->is_warn, "ok is_warn");
@@ -139,6 +139,7 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
 # Log::Dispatch single callback
 {
     my $reverse = sub { my %p = @_;  return reverse $p{message}; };
+
     my $dispatch = Mojolicious::Plugin::LogDispatch->new( callbacks => $reverse );
 
     my $string;
