@@ -20,3 +20,5 @@ nytprof.out
 /_eumm/
 local/
 cpanfile.snapshot
+*.tar.gz
+Mojolicious-Plugin-LogDispatch-*.*/
