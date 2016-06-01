@@ -4,15 +4,84 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
 # SYNOPSIS
 
-    # Mojolicious
+    # Mojolicious using shorthand
     $self->plugin('LogDispatch');
 
-    # Mojolicious::Lite
+    # Mojolicious using longform
+    $self->plugin('Mojolicious::Plugin::LogDispatch');
+
+    # Mojolicious::Lite using shorthand
     plugin 'LogDispatch';
+
+    # Mojolicious::Lite using longform
+    $self->plugin('Mojolicious::Plugin::LogDispatch');
+
+    # Mojo::Log compatibility
+    $log->debug('How the helicopter did we get here?');
+    $log->info('J.F.Y.I');
+    $log->warn('What are you trying to do Dave?');
+    $log->error('Do not divide by zero');
+    $log->fatal('Unable to render error message');    
+    
+    # Log::Dispatch compatibility
+    $log->notice ('J.F.Y.I');
+    $log->warning('What are you trying to do Dave?');
+    $log->critical('Do NOT divide by zero');
+    $log->alert('Seriously! do NOT divide by zero');
+    $log->emergency('Unable to render error message');
+
+    # Syslog compatibility
+    $log->err('Do not divide by zero');
+    $log->crit('Do NOT divide by zero');
+    $log->emerg('Unable to render error message');
+
+my $log = Mojolicious::Plugin::LogDispatch->new();
 
 # DESCRIPTION
 
-[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is a [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin.
+[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is a [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin for [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
+
+[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is derived from [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), which released
+in the deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
+integration into the newer plugin namespace (see also MOTIVATION).
+
+The component supports Mojo::Log methods and is there for compatible with the default 
+Mojolicious logging mechanism and it attempts to mimick this if no special configuration is added. 
+The component also exposes the Log::Dispatch methods for logging. Mojolicious only works with 5 log levels:
+
+- debug
+- info
+- warn
+- error
+- fatal
+
+Where Log::Dispatch works with 8, derived from Syslog.
+
+- debug
+- info
+- notice
+- warning
+- error
+- critical
+- alert
+- emergency
+
+This mean that you can have higher differenciation on your logging statements using 
+Log::Dispatch. The standard log levels from Mojolicious are mapped accordingly as 
+depicted in the below figure:
+
+| Mojo::Log | Log::Dispatch | Syslog  |
+| --------- | ------------- | ------- |
+| fatal     | emergency     | emerg   |
+|           | alert         | alert   |
+|           | critical      | crit    |
+| error     | error         | err     |
+| warn      | warning       | warning |
+|           | notice        | notice  |
+| info      | info          | info    |
+| debug     | debug         | debug   |
+
+Mojolicious::Plugin::LogDispatch
 
 # METHODS
 
@@ -25,9 +94,37 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
 Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) application.
 
-# SEE ALSO
+## debug
 
-, , 
+    $log->debug('How the helicopter did we get here?');
+
+## info
+
+    $log->info('J.F.Y.I');
+
+## notice
+
+    $log->notice ('J.F.Y.I');
+
+## warning / warn
+
+    $log->warning('What are you trying to do Dave?');
+
+## error / err
+
+    $log->err('Do not divide by zero');
+
+## critical / crit
+
+    $log->critical('Do NOT divide by zero');
+
+## alert
+
+    $log->alert('Seriously! do NOT divide by zero');
+
+## fatal / emergency / emerg
+
+    $log->emerg('Unable to render error message');
 
 # SEE ALSO
 
@@ -36,6 +133,11 @@ Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) applicati
 - [http://mojolicio.us](http://mojolicio.us).
 - [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 - [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch)
+- [https://en.wikipedia.org/wiki/Syslog](https://en.wikipedia.org/wiki/Syslog)
+
+# MOTIVATION
+
+The lack of support on MojoX::Log::Dispatch resulted in this distribution.
 
 # AUTHOR
 
@@ -43,6 +145,11 @@ Jonas B. Nielsen, (jonasbn) - `<jonasbn@cpan.org>`
 
 # LICENSE AND COPYRIGHT
 
+The implementation is derived from MojoX::Log::Dispatch which is no longer 
+supported
+
 Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
 
 Mojolicious-Plugin-LogDispatch is released under the Artistic License 2.0
+
+MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights reserved.
