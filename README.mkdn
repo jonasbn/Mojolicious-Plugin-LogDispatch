@@ -2,6 +2,10 @@
 
 Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
+# VERSION
+
+0.01
+
 # SYNOPSIS
 
     # Mojolicious using shorthand
@@ -35,14 +39,37 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     $log->crit('Do NOT divide by zero');
     $log->emerg('Unable to render error message');
 
-my $log = Mojolicious::Plugin::LogDispatch->new();
+    # If you want to add additional logging configuration to your Mojolicious application
+    my $config = $self->plugin('Config');
+    $self->plugin('Mojolicious::Plugin::LogDispatch' => $config->{LogDispatch} // {} );
+
+    my $log = Mojolicious::Plugin::LogDispatch->new();
+
+    # Setting up logging using LogDispatch in your application's startup  method
+    my $dispatch = Mojolicious::Plugin::LogDispatch->new(
+        'path' => '/path/to/my/logfile.log',
+        'remove_default_log_obj' => 0, # removes default initialized log handler
+    );
+
+    # Adding an additional logger, logging to syslog
+    $dispatch->add(Log::Dispatch::Syslog->new(
+        name      => 'logsys',
+        min_level => 'debug',
+        ident     => 'MyMojo::App',
+        facility  => 'local0'
+    ));
+
+    $self->log($dispatch);
+     
+    #and then
+    $self->log->debug("Why isn't this working?");  
 
 # DESCRIPTION
 
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is a [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin for [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 
-[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is derived from [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), which released
-in the deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
+[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is derived from [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), which was released
+in the now deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
 integration into the newer plugin namespace (see also MOTIVATION).
 
 The component supports Mojo::Log methods and is there for compatible with the default 
@@ -72,9 +99,9 @@ depicted in the below figure:
 
 | Mojo::Log | Log::Dispatch | Syslog  |
 | --------- | ------------- | ------- |
-| fatal     | emergency     | emerg   |
+|           | emergency     | emerg   |
 |           | alert         | alert   |
-|           | critical      | crit    |
+| fatal     | critical      | crit    |
 | error     | error         | err     |
 | warn      | warning       | warning |
 |           | notice        | notice  |
@@ -83,7 +110,7 @@ depicted in the below figure:
 
 Mojolicious::Plugin::LogDispatch
 
-# METHODS
+# SUBROUTINES/METHODS
 
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) inherits all methods from
 [Mojolicious::Plugin](https://metacpan.org/pod/Mojolicious::Plugin) and implements the following new ones.
@@ -125,6 +152,133 @@ Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) applicati
 ## fatal / emergency / emerg
 
     $log->emerg('Unable to render error message');
+
+## add
+
+## dispatcher
+
+## is\_alert
+
+## is\_crit
+
+## is\_critical
+
+## is\_debug
+
+## is\_emerg
+
+## is\_emergency
+
+## is\_err
+
+## is\_error
+
+## is\_fatal
+
+## is\_info
+
+## is\_notice
+
+## is\_warn
+
+## is\_warning
+
+## level\_is\_valid
+
+## log
+
+## log\_and\_croak
+
+## log\_and\_die
+
+## log\_to
+
+## output
+
+## remove
+
+## would\_log
+
+# COMPATIBILITY
+
+## Mojo::Log
+
+## MojoX::Log::Dispatch
+
+# INCOMPATIBILITIES
+
+# CONFIGURATION AND ENVIRONMENT
+
+One of the great features of Mojolicious is it's ability to run with segregated 
+configurations based on the mode in which the application is running.
+
+If we would have an Mojolicious application with 5 supported methods:
+
+- development
+
+    # myapp.development.conf
+    LogDispatch => {
+        file => {
+            min_level => 'debug',
+            newline => 1,
+        },
+    },
+
+    # myapp.test.conf
+    LogDispatch => {
+        file => {
+            min_level => 'info',
+            newline => 1,
+        },
+    },
+
+    # myapp.staging.conf
+    LogDispatch => {
+        file => {
+            min_level => 'info',
+            newline   => 1,
+        },
+    },
+
+    # myapp.sandbox.conf
+    LogDispatch => {
+        Syslog => {
+            min_level => 'warn',
+            newline   => 1,
+            ident     => 'myapp',
+            facility  => 'local0',
+        },
+        'Log::Dispatch::Email::MailSender' => {
+            min_level => 'critical',
+            newline   => 1,
+            subject   => 'MyApp (sandbox)',
+            from      => 'myapp+sandbox@mydomain.io',
+            to        => [ 'operations@mydomain.io' ],
+        },
+    },
+
+    # myapp.production.conf
+    LogDispatch => {
+        Syslog => {
+            min_level => 'warn',
+            newline   => 1,
+            ident     => 'myapp',
+            facility  => 'local0',
+        },
+        'Log::Dispatch::Email::MailSender' => {
+            min_level => 'critical',
+            newline   => 1,
+            subject   => 'MyApp (production)',
+            from      => 'myapp+production@mydomain.io',
+            to        => [ 'operations@mydomain.io' ],
+        },
+    },
+
+# BUGS AND LIMITATIONS
+
+# DIAGNOSTICS
+
+# DEPENDENCIES
 
 # SEE ALSO
 

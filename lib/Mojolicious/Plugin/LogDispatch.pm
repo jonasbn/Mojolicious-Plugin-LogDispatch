@@ -75,6 +75,9 @@ __PACKAGE__->attr(
 );
 
 __PACKAGE__->attr('callbacks');
+__PACKAGE__->attr('history'); #TODO
+__PACKAGE__->attr('message'); #TODO
+__PACKAGE__->attr('max_history_size'); #TODO
 __PACKAGE__->attr( 'remove_default_log_obj' => TRUE );
 
 #some methods from Log::Dispatch
@@ -109,12 +112,12 @@ sub level_is_valid { return shift->handle->level_is_valid(@_) }
 sub log_and_die    { return shift->handle->log_and_die(@_) }
 sub log_and_croak  { return shift->handle->log_and_croak(@_) }
 
-sub fatal     { shift->log( 'emergency', @_ ) }
 sub emergency { shift->log( 'emergency', @_ ) }
 sub emerg { shift->log( 'emergency', @_ ) }
 
 sub alert     { shift->log( 'alert',     @_ ) }
 
+sub fatal     { shift->log( 'critical', @_ ) }
 sub critical  { shift->log( 'critical',  @_ ) }
 sub crit      { shift->log( 'critical',  @_ ) }
 
@@ -138,12 +141,12 @@ sub is_level {
     return $self->would_log($level);
 }
 
-sub is_fatal     { shift->is_level('emergency') }
 sub is_emergency { shift->is_level('emergency') }
 sub is_emerg     { shift->is_level('emergency') }
 
 sub is_alert     { shift->is_level('alert') }
 
+sub is_fatal     { shift->is_level('critical') }
 sub is_critical  { shift->is_level('critical') }
 sub is_crit      { shift->is_level('critical') }
 
@@ -170,6 +173,10 @@ __END__
 =head1 NAME
 
 Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
+
+=head1 VERSION
+
+0.01
 
 =head1 SYNOPSIS
 
@@ -204,15 +211,37 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     $log->crit('Do NOT divide by zero');
     $log->emerg('Unable to render error message');
 
+    # If you want to add additional logging configuration to your Mojolicious application
+    my $config = $self->plugin('Config');
+    $self->plugin('Mojolicious::Plugin::LogDispatch' => $config->{LogDispatch} // {} );
 
-my $log = Mojolicious::Plugin::LogDispatch->new();
+    my $log = Mojolicious::Plugin::LogDispatch->new();
+
+    # Setting up logging using LogDispatch in your application's startup  method
+    my $dispatch = Mojolicious::Plugin::LogDispatch->new(
+        'path' => '/path/to/my/logfile.log',
+        'remove_default_log_obj' => 0, # removes default initialized log handler
+    );
+
+    # Adding an additional logger, logging to syslog
+    $dispatch->add(Log::Dispatch::Syslog->new(
+        name      => 'logsys',
+        min_level => 'debug',
+        ident     => 'MyMojo::App',
+        facility  => 'local0'
+    ));
+
+    $self->log($dispatch);
+     
+    #and then
+    $self->log->debug("Why isn't this working?");  
 
 =head1 DESCRIPTION
 
 L<Mojolicious::Plugin::LogDispatch> is a L<Mojolicious> plugin for L<Log::Dispatch>
 
-L<Mojolicious::Plugin::LogDispatch> is derived from L<MojoX::Log::Dispatch>, which released
-in the deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
+L<Mojolicious::Plugin::LogDispatch> is derived from L<MojoX::Log::Dispatch>, which was released
+in the now deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
 integration into the newer plugin namespace (see also MOTIVATION).
 
 The component supports Mojo::Log methods and is there for compatible with the default 
@@ -280,9 +309,9 @@ depicted in the below figure:
 
 | Mojo::Log | Log::Dispatch | Syslog  |
 | --------- | ------------- | ------- |
-| fatal     | emergency     | emerg   |
+|           | emergency     | emerg   |
 |           | alert         | alert   |
-|           | critical      | crit    |
+| fatal     | critical      | crit    |
 | error     | error         | err     |
 | warn      | warning       | warning |
 |           | notice        | notice  |
@@ -293,7 +322,7 @@ depicted in the below figure:
 
 Mojolicious::Plugin::LogDispatch
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
 L<Mojolicious::Plugin::LogDispatch> inherits all methods from
 L<Mojolicious::Plugin> and implements the following new ones.
@@ -335,6 +364,138 @@ Register plugin in L<Mojolicious> application.
 =head2 fatal / emergency / emerg
 
     $log->emerg('Unable to render error message');
+
+=head2 add
+
+=head2 dispatcher
+
+=head2 is_alert
+
+=head2 is_crit
+
+=head2 is_critical
+
+=head2 is_debug
+
+=head2 is_emerg
+
+=head2 is_emergency
+
+=head2 is_err
+
+=head2 is_error
+
+=head2 is_fatal
+
+=head2 is_info
+
+=head2 is_notice
+
+=head2 is_warn
+
+=head2 is_warning
+
+=head2 level_is_valid
+
+=head2 log
+
+=head2 log_and_croak
+
+=head2 log_and_die
+
+=head2 log_to
+
+=head2 output
+
+=head2 remove
+
+=head2 would_log
+
+=head1 COMPATIBILITY
+
+=head2 Mojo::Log
+
+=head2 MojoX::Log::Dispatch
+
+=head1 INCOMPATIBILITIES
+
+=head1 CONFIGURATION AND ENVIRONMENT
+
+One of the great features of Mojolicious is it's ability to run with segregated 
+configurations based on the mode in which the application is running.
+
+If we would have an Mojolicious application with 5 supported methods:
+
+=over
+
+=item * development
+
+=back
+
+
+    # myapp.development.conf
+    LogDispatch => {
+        file => {
+            min_level => 'debug',
+            newline => 1,
+        },
+    },
+
+    # myapp.test.conf
+    LogDispatch => {
+        file => {
+            min_level => 'info',
+            newline => 1,
+        },
+    },
+
+    # myapp.staging.conf
+    LogDispatch => {
+        file => {
+            min_level => 'info',
+            newline   => 1,
+        },
+    },
+
+    # myapp.sandbox.conf
+    LogDispatch => {
+        Syslog => {
+            min_level => 'warn',
+            newline   => 1,
+            ident     => 'myapp',
+            facility  => 'local0',
+        },
+        'Log::Dispatch::Email::MailSender' => {
+            min_level => 'critical',
+            newline   => 1,
+            subject   => 'MyApp (sandbox)',
+            from      => 'myapp+sandbox@mydomain.io',
+            to        => [ 'operations@mydomain.io' ],
+        },
+    },
+
+    # myapp.production.conf
+    LogDispatch => {
+        Syslog => {
+            min_level => 'warn',
+            newline   => 1,
+            ident     => 'myapp',
+            facility  => 'local0',
+        },
+        'Log::Dispatch::Email::MailSender' => {
+            min_level => 'critical',
+            newline   => 1,
+            subject   => 'MyApp (production)',
+            from      => 'myapp+production@mydomain.io',
+            to        => [ 'operations@mydomain.io' ],
+        },
+    },
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 DIAGNOSTICS
+
+=head1 DEPENDENCIES
 
 =head1 SEE ALSO
 

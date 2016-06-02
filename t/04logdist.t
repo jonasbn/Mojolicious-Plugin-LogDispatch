@@ -176,7 +176,7 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
     ok($dispatch->is_error, "it is error");
     ok(!$dispatch->is_emergency, "it is not emergency");  
     ok(!$dispatch->is_info, "it is not info");
-    ok(!$dispatch->is_fatal, "it is not fatal");   
+    ok($dispatch->is_fatal, "it is not fatal");   
 }
 
 # Log::Dispatch::Output single callback
