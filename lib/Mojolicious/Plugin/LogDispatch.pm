@@ -9,6 +9,8 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 
+use Data::Dumper;
+
 our $VERSION = '0.01';
 
 use constant TRUE => 1;
@@ -18,17 +20,21 @@ sub register {
 
     $app->log->info('Registering Mojolicious::Plugin::LogDispatch');
 
+    my $orig_log = $app->log;
+    $self->orig_log($orig_log);
+
     my $path = $app->log->path;
     if ($path) {
         $app->log->debug("Resolved path: $path");
         $self->path($path);
     }
 
-    my $log = $self->handle();
+    #my $log = $self->handle();
+    my $log = $self;
     if ($log) {
-        $app->log->info('Instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->outputs);
+        $app->log->info('Instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->handle->outputs);
     }
-    $app->log->info('Activating instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->outputs);
+    $app->log->info('Activating instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->handle->outputs);
     $app->log($log);
 
     return;
@@ -37,6 +43,12 @@ sub register {
 __PACKAGE__->attr(
     'handle' => sub {
         my $self = shift;
+
+        my @caller = caller();
+
+        if ($self->orig_log) {
+            $self->orig_log->debug("calling handle from: ", join ',', @caller);
+        }
 
         my $dispatcher;
 
@@ -48,6 +60,8 @@ __PACKAGE__->attr(
         }
 
         if ( $self->path ) {
+            $self->orig_log->debug("we have a path: ", $self->path);
+
             # Create a logging object that will log to a file if we have a path
             $dispatcher->add(
                 Log::Dispatch::File->new(
@@ -60,24 +74,37 @@ __PACKAGE__->attr(
             );
         }
         else {
+            if ($self->orig_log) {
+                $self->orig_log->debug("we have no path, defaulting to screen");
+            }
+
             # Create a logging object that will log to STDERR by default
             $dispatcher->add(
                 Log::Dispatch::Screen->new(
                     'name'      => '_default_log_obj',
                     'min_level' => $self->level,
                     'stderr'    => TRUE,
+                    'newline'   => TRUE,
                 )
             );
+        }
+
+        if ($self->orig_log) {
+            $self->orig_log->debug("returning dispatcher");
         }
 
         return $dispatcher;
     }
 );
 
+#__PACKAGE__->attr('path'); #TODO: Mojo::Log
+#__PACKAGE__->attr('level'); #TODO: Mojo::Log
+#__PACKAGE__->attr('min_level'); #TODO: Mojo::Log
+__PACKAGE__->attr('orig_log');
 __PACKAGE__->attr('callbacks');
-__PACKAGE__->attr('history'); #TODO
-__PACKAGE__->attr('message'); #TODO
-__PACKAGE__->attr('max_history_size'); #TODO
+#__PACKAGE__->attr('history'); #TODO
+#__PACKAGE__->attr('message'); #TODO
+#__PACKAGE__->attr('max_history_size'); #TODO
 __PACKAGE__->attr( 'remove_default_log_obj' => TRUE );
 
 #some methods from Log::Dispatch
@@ -96,6 +123,10 @@ sub dispatcher { return shift->handle }
 sub log {
     my ( $self, $level, @msgs ) = @_;
 
+    if ($self->orig_log) {
+        $self->orig_log->debug("calling log");
+    }
+
     # Check log level
     $level = lc $level;
     return $self unless $level && $self->is_level($level);
@@ -105,7 +136,13 @@ sub log {
 }
 
 sub remove         { return shift->handle->remove(@_) }
-sub output         { return shift->handle->output(@_) }
+sub output         { 
+    my $self = shift;
+
+    my $output = $self->handle->output(@_);
+
+    return $output;
+}
 sub would_log      { return shift->handle->would_log(@_) }
 sub log_to         { return shift->handle->log_to(@_) }
 sub level_is_valid { return shift->handle->level_is_valid(@_) }
@@ -113,25 +150,47 @@ sub log_and_die    { return shift->handle->log_and_die(@_) }
 sub log_and_croak  { return shift->handle->log_and_croak(@_) }
 
 sub emergency { shift->log( 'emergency', @_ ) }
-sub emerg { shift->log( 'emergency', @_ ) }
+sub emerg { shift->emergency( @_ ) }
 
 sub alert     { shift->log( 'alert',     @_ ) }
 
-sub fatal     { shift->log( 'critical', @_ ) }
+sub fatal     { 
+    my $self = shift;
+
+    print STDERR 'fatal ', Dumper \@_;
+
+    $self->critical( @_ );
+}
+
 sub critical  { shift->log( 'critical',  @_ ) }
-sub crit      { shift->log( 'critical',  @_ ) }
+sub crit      { shift->critical( @_ ) }
 
-sub error     { shift->log( 'error',     @_ ) }
-sub err       { shift->log( 'error',     @_ ) }
+sub error     {
+    my $self = shift;
+    return $self->log( 'error', @_ ) 
+}
+sub err       { shift->error(@_ ) }
 
-sub warning   { shift->log( 'warning',   @_ ) }
-sub warn      { shift->log( 'warning',   @_ ) }
+sub warning   {
+    my $self = shift;
+
+    return $self->log( 'warning', @_ )     
+}
+sub warn      { shift->warning(@_) }
 
 sub notice    { shift->log( 'notice',    @_ ) }
 
-sub info      { shift->log( 'info',    @_ ) }
+sub info      {
+    my $self = shift;
 
-sub debug     { shift->log( 'debug',     @_ ) }
+    return $self->log( 'info', @_ );
+}
+
+sub debug     {
+    my $self = shift;
+
+    return $self->log( 'debug', @_ );
+}
 
 sub is_level {
     my ( $self, $level ) = @_;
