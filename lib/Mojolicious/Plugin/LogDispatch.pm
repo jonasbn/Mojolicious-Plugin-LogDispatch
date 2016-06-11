@@ -9,11 +9,9 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 
-use Data::Dumper;
-
 our $VERSION = '0.01';
 
-use constant TRUE => 1;
+use constant TRUE => 1; # for readability
 
 sub register {
     my ( $self, $app, $conf ) = @_;
@@ -43,12 +41,6 @@ sub register {
 __PACKAGE__->attr(
     'handle' => sub {
         my $self = shift;
-
-        my @caller = caller();
-
-        if ($self->orig_log) {
-            $self->orig_log->debug("calling handle from: ", join ',', @caller);
-        }
 
         my $dispatcher;
 
@@ -90,16 +82,13 @@ __PACKAGE__->attr(
         }
 
         if ($self->orig_log) {
-            $self->orig_log->debug("returning dispatcher");
+            $self->orig_log->debug('returning dispatcher with logging outputters: '. map { ref $_ } $dispatcher->outputs);
         }
 
         return $dispatcher;
     }
 );
 
-#__PACKAGE__->attr('path'); #TODO: Mojo::Log
-#__PACKAGE__->attr('level'); #TODO: Mojo::Log
-#__PACKAGE__->attr('min_level'); #TODO: Mojo::Log
 __PACKAGE__->attr('orig_log');
 __PACKAGE__->attr('callbacks');
 #__PACKAGE__->attr('history'); #TODO
@@ -107,7 +96,7 @@ __PACKAGE__->attr('callbacks');
 #__PACKAGE__->attr('max_history_size'); #TODO
 __PACKAGE__->attr( 'remove_default_log_obj' => TRUE );
 
-#some methods from Log::Dispatch
+# Methods from Log::Dispatch
 sub add {
     my $self = shift;
     my $l    = $self->handle->add(@_);
@@ -118,14 +107,8 @@ sub add {
     return $l;
 }
 
-sub dispatcher { return shift->handle }
-
 sub log {
     my ( $self, $level, @msgs ) = @_;
-
-    if ($self->orig_log) {
-        $self->orig_log->debug("calling log");
-    }
 
     # Check log level
     $level = lc $level;
@@ -149,6 +132,8 @@ sub level_is_valid { return shift->handle->level_is_valid(@_) }
 sub log_and_die    { return shift->handle->log_and_die(@_) }
 sub log_and_croak  { return shift->handle->log_and_croak(@_) }
 
+# log methods
+
 sub emergency { shift->log( 'emergency', @_ ) }
 sub emerg { shift->emergency( @_ ) }
 
@@ -156,10 +141,7 @@ sub alert     { shift->log( 'alert',     @_ ) }
 
 sub fatal     { 
     my $self = shift;
-
-    print STDERR 'fatal ', Dumper \@_;
-
-    $self->critical( @_ );
+    return $self->critical( @_ );
 }
 
 sub critical  { shift->log( 'critical',  @_ ) }
@@ -191,6 +173,8 @@ sub debug     {
 
     return $self->log( 'debug', @_ );
 }
+
+# log level methods
 
 sub is_level {
     my ( $self, $level ) = @_;
@@ -235,14 +219,14 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
 =head1 VERSION
 
-0.01
+This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
 =head1 SYNOPSIS
 
-    # Mojolicious using shorthand
+    # Mojolicious application using shorthand
     $self->plugin('LogDispatch');
 
-    # Mojolicious using longform
+    # Mojolicious application using longform
     $self->plugin('Mojolicious::Plugin::LogDispatch');
 
     # Mojolicious::Lite using shorthand
@@ -266,9 +250,9 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     $log->emergency('Unable to render error message');
 
     # Syslog compatibility
-    $log->err('Do not divide by zero');
-    $log->crit('Do NOT divide by zero');
-    $log->emerg('Unable to render error message');
+    $log->err('Do not divide by zero'); #error
+    $log->crit('Do NOT divide by zero'); #critical 
+    $log->emerg('Unable to render error message'); #emergency
 
     # If you want to add additional logging configuration to your Mojolicious application
     my $config = $self->plugin('Config');
@@ -285,7 +269,7 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     # Adding an additional logger, logging to syslog
     $dispatch->add(Log::Dispatch::Syslog->new(
         name      => 'logsys',
-        min_level => 'debug',
+        min_level => 'info',
         ident     => 'MyMojo::App',
         facility  => 'local0'
     ));
@@ -300,46 +284,48 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 L<Mojolicious::Plugin::LogDispatch> is a L<Mojolicious> plugin for L<Log::Dispatch>
 
 L<Mojolicious::Plugin::LogDispatch> is derived from L<MojoX::Log::Dispatch>, which was released
-in the now deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
+in the now deprecated Mojolicious plugin namespace. This distribution lifts the L<Log::Dispatch>
 integration into the newer plugin namespace (see also MOTIVATION).
 
-The component supports Mojo::Log methods and is there for compatible with the default 
+The component supports L<Mojo::Log> methods and is there for compatible with the default 
 Mojolicious logging mechanism and it attempts to mimick this if no special configuration is added. 
-The component also exposes the Log::Dispatch methods for logging. Mojolicious only works with 5 log levels:
+The component also exposes the Log::Dispatch methods for logging. 
+
+L<Mojolicious> via L<Mojo::Log> works with 5 log levels:
 
 =over
 
-=item debug
+=item * debug
 
-=item info
+=item * info
 
-=item warn
+=item * warn
 
-=item error
+=item * error
 
-=item fatal
+=item * fatal
 
 =back
 
-Where Log::Dispatch works with 8, derived from Syslog.
+Where Log::Dispatch works with 8 log levels, derived from Syslog.
 
 =over
 
-=item debug
+=item * debug
 
-=item info
+=item * info
 
-=item notice
+=item * notice
 
-=item warning
+=item * warning
 
-=item error
+=item * error
 
-=item critical
+=item * critical
 
-=item alert
+=item * alert
 
-=item emergency
+=item * emergency
 
 =back
 
@@ -349,18 +335,18 @@ depicted in the below figure:
 
 =begin text
 
-+-----------+---------------+---------+
-| Mojo::Log | Log::Dispatch | Syslog  |
-+-----------+---------------+---------+
-| fatal     | emergency     | emerg   |
-|           | alert         | alert   |
-|           | critical      | crit    |
-| error     | error         | err     |
-| warn      | warning       | warning |
-|           | notice        | notice  |
-| info      | info          | info    |
-| debug     | debug         | debug   |
-+-----------+---------------+---------+
+    +-----------+---------------+---------+
+    | Mojo::Log | Log::Dispatch | Syslog  |
+    +-----------+---------------+---------+
+    |           | emergency     | emerg   |
+    |           | alert         | alert   |
+    | fatal     | critical      | crit    |
+    | error     | error         | err     |
+    | warn      | warning       | warning |
+    |           | notice        | notice  |
+    | info      | info          | info    |
+    | debug     | debug         | debug   |
+    +-----------+---------------+---------+
 
 =end text
 
@@ -379,82 +365,15 @@ depicted in the below figure:
 
 =end markdown
 
-Mojolicious::Plugin::LogDispatch
 
 =head1 SUBROUTINES/METHODS
 
 L<Mojolicious::Plugin::LogDispatch> inherits all methods from
 L<Mojolicious::Plugin> and implements the following new ones.
 
-=head2 register
-
-  $plugin->register(Mojolicious->new);
-
-Register plugin in L<Mojolicious> application.
-
-=head2 debug
-
-    $log->debug('How the helicopter did we get here?');
-
-=head2 info
-
-    $log->info('J.F.Y.I');
-
-=head2 notice
-
-    $log->notice ('J.F.Y.I');
-
-=head2 warning / warn
-
-    $log->warning('What are you trying to do Dave?');
-
-=head2 error / err
-
-    $log->err('Do not divide by zero');
-
-=head2 critical / crit
-
-    $log->critical('Do NOT divide by zero');
-
-=head2 alert
-
-    $log->alert('Seriously! do NOT divide by zero');
-
-=head2 fatal / emergency / emerg
-
-    $log->emerg('Unable to render error message');
+In addition L<Mojolicious::Plugin::LogDispatch> inherits from L<Mojo::Log>
 
 =head2 add
-
-=head2 dispatcher
-
-=head2 is_alert
-
-=head2 is_crit
-
-=head2 is_critical
-
-=head2 is_debug
-
-=head2 is_emerg
-
-=head2 is_emergency
-
-=head2 is_err
-
-=head2 is_error
-
-=head2 is_fatal
-
-=head2 is_info
-
-=head2 is_notice
-
-=head2 is_warn
-
-=head2 is_warning
-
-=head2 level_is_valid
 
 =head2 log
 
@@ -469,6 +388,87 @@ Register plugin in L<Mojolicious> application.
 =head2 remove
 
 =head2 would_log
+
+=head2 register
+
+  $plugin->register(Mojolicious->new);
+
+Register plugin in L<Mojolicious> application.
+
+This is a part of the L<Mojolicious> plugin API and it not used directly if you just want 
+to use L<Mojolicious::Plugin::LogDispatch> for logging.
+
+=head2 LOG METHODS
+
+=head3 debug
+
+    $log->debug('How the helicopter did we get here?');
+
+=head3 info
+
+    $log->info('J.F.Y.I');
+
+=head3 notice
+
+    $log->notice ('J.F.Y.I');
+
+=head3 warning / warn
+
+    $log->warning('What are you trying to do Dave?');
+
+=head3 error / err
+
+    $log->err('Do not divide by zero');
+
+=head3 critical / crit
+
+    $log->critical('Do NOT divide by zero');
+
+=head3 alert
+
+    $log->alert('Seriously! do NOT divide by zero');
+
+=head3 fatal / emergency / emerg
+
+    $log->emerg('Unable to render error message');
+
+=head2 LOG LEVEL METHODS
+
+=head3 level_is_valid
+
+A method lifted from L<Log::Dispatch> returns 
+
+    $log->level_is_valid("PANIC!");
+
+    $log->level_is_valid("DEFCON 5");
+
+See also: L<https://metacpan.org/pod/Log::Dispatch#dispatch-level_is_valid-string>
+
+=head3 is_alert
+
+=head3 is_crit
+
+=head3 is_critical
+
+=head3 is_debug
+
+=head3 is_emerg
+
+=head3 is_emergency
+
+=head3 is_err
+
+=head3 is_error
+
+=head3 is_fatal
+
+=head3 is_info
+
+=head3 is_notice
+
+=head3 is_warn
+
+=head3 is_warning
 
 =head1 COMPATIBILITY
 
@@ -489,8 +489,19 @@ If we would have an Mojolicious application with 5 supported methods:
 
 =item * development
 
+=item * test
+
+=item * staging
+
+=item * sandbox
+
+=item * production
+
 =back
 
+The example configurations could look like the following:
+
+Example development configuration:
 
     # myapp.development.conf
     LogDispatch => {
@@ -500,6 +511,8 @@ If we would have an Mojolicious application with 5 supported methods:
         },
     },
 
+Example test configuration:
+
     # myapp.test.conf
     LogDispatch => {
         file => {
@@ -508,6 +521,8 @@ If we would have an Mojolicious application with 5 supported methods:
         },
     },
 
+Example staging configuration:
+
     # myapp.staging.conf
     LogDispatch => {
         file => {
@@ -515,6 +530,8 @@ If we would have an Mojolicious application with 5 supported methods:
             newline   => 1,
         },
     },
+
+Example sandbox configuration:
 
     # myapp.sandbox.conf
     LogDispatch => {
@@ -532,6 +549,8 @@ If we would have an Mojolicious application with 5 supported methods:
             to        => [ 'operations@mydomain.io' ],
         },
     },
+
+Example production configuration:
 
     # myapp.production.conf
     LogDispatch => {
@@ -556,6 +575,33 @@ If we would have an Mojolicious application with 5 supported methods:
 
 =head1 DEPENDENCIES
 
+=over
+
+=item * L<Mojo::Base>
+
+=item * L<Mojolicious::Plugin>
+
+=item * L<Mojo::Log>
+
+=item * L<Log::Dispatch>
+
+=item * L<Log::Dispatch::File>
+
+=item * L<Log::Dispatch::Screen>
+
+=back
+
+=head1 TODO
+
+Please see the issue list on Github for a complete list, since this list
+is just sort of a draft of future improvements and ideas.
+
+=over
+
+=item * Support for format method from L<Mojo::Log>
+
+=back
+
 =head1 SEE ALSO
 
 =over
@@ -576,7 +622,8 @@ If we would have an Mojolicious application with 5 supported methods:
 
 =head1 MOTIVATION
 
-The lack of support on MojoX::Log::Dispatch resulted in this distribution.
+The lack of support on MojoX::Log::Dispatch resulted in this distribution. See L<RT:91305|https://rt.cpan.org/Public/Bug/Display.html?id=91305>
+for an example.
 
 =head1 AUTHOR
 

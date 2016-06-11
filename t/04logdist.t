@@ -15,7 +15,7 @@ use Log::Dispatch::Screen;
 
 use IO::File;
 
-my $tempdir = '/tmp'; #tempdir( CLEANUP => 0 );
+my $tempdir = tempdir( CLEANUP => 1 );
 
 diag "Using temporary directory: $tempdir\n";
 
@@ -125,6 +125,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
 
     $dispatch->emerg("emergency\n" );
     $dispatch->crit( "critical\n" );
+    $dispatch->fatal( "fatak is also critical\n" );
+    $dispatch->critical( "critical\n" );
 
     undef $dispatch; # close file handles
 

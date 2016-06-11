@@ -4,14 +4,14 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 
 # VERSION
 
-0.01
+This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
 # SYNOPSIS
 
-    # Mojolicious using shorthand
+    # Mojolicious application using shorthand
     $self->plugin('LogDispatch');
 
-    # Mojolicious using longform
+    # Mojolicious application using longform
     $self->plugin('Mojolicious::Plugin::LogDispatch');
 
     # Mojolicious::Lite using shorthand
@@ -35,9 +35,9 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     $log->emergency('Unable to render error message');
 
     # Syslog compatibility
-    $log->err('Do not divide by zero');
-    $log->crit('Do NOT divide by zero');
-    $log->emerg('Unable to render error message');
+    $log->err('Do not divide by zero'); #error
+    $log->crit('Do NOT divide by zero'); #critical 
+    $log->emerg('Unable to render error message'); #emergency
 
     # If you want to add additional logging configuration to your Mojolicious application
     my $config = $self->plugin('Config');
@@ -54,7 +54,7 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
     # Adding an additional logger, logging to syslog
     $dispatch->add(Log::Dispatch::Syslog->new(
         name      => 'logsys',
-        min_level => 'debug',
+        min_level => 'info',
         ident     => 'MyMojo::App',
         facility  => 'local0'
     ));
@@ -69,12 +69,14 @@ Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is a [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin for [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) is derived from [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), which was released
-in the now deprecated Mojolicious plugin namespace. This distribution lifts the Log::Dispatch 
+in the now deprecated Mojolicious plugin namespace. This distribution lifts the [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 integration into the newer plugin namespace (see also MOTIVATION).
 
-The component supports Mojo::Log methods and is there for compatible with the default 
+The component supports [Mojo::Log](https://metacpan.org/pod/Mojo::Log) methods and is there for compatible with the default 
 Mojolicious logging mechanism and it attempts to mimick this if no special configuration is added. 
-The component also exposes the Log::Dispatch methods for logging. Mojolicious only works with 5 log levels:
+The component also exposes the Log::Dispatch methods for logging. 
+
+[Mojolicious](https://metacpan.org/pod/Mojolicious) via [Mojo::Log](https://metacpan.org/pod/Mojo::Log) works with 5 log levels:
 
 - debug
 - info
@@ -82,7 +84,7 @@ The component also exposes the Log::Dispatch methods for logging. Mojolicious on
 - error
 - fatal
 
-Where Log::Dispatch works with 8, derived from Syslog.
+Where Log::Dispatch works with 8 log levels, derived from Syslog.
 
 - debug
 - info
@@ -108,82 +110,14 @@ depicted in the below figure:
 | info      | info          | info    |
 | debug     | debug         | debug   |
 
-Mojolicious::Plugin::LogDispatch
-
 # SUBROUTINES/METHODS
 
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) inherits all methods from
 [Mojolicious::Plugin](https://metacpan.org/pod/Mojolicious::Plugin) and implements the following new ones.
 
-## register
-
-    $plugin->register(Mojolicious->new);
-
-Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) application.
-
-## debug
-
-    $log->debug('How the helicopter did we get here?');
-
-## info
-
-    $log->info('J.F.Y.I');
-
-## notice
-
-    $log->notice ('J.F.Y.I');
-
-## warning / warn
-
-    $log->warning('What are you trying to do Dave?');
-
-## error / err
-
-    $log->err('Do not divide by zero');
-
-## critical / crit
-
-    $log->critical('Do NOT divide by zero');
-
-## alert
-
-    $log->alert('Seriously! do NOT divide by zero');
-
-## fatal / emergency / emerg
-
-    $log->emerg('Unable to render error message');
+In addition [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) inherits from [Mojo::Log](https://metacpan.org/pod/Mojo::Log)
 
 ## add
-
-## dispatcher
-
-## is\_alert
-
-## is\_crit
-
-## is\_critical
-
-## is\_debug
-
-## is\_emerg
-
-## is\_emergency
-
-## is\_err
-
-## is\_error
-
-## is\_fatal
-
-## is\_info
-
-## is\_notice
-
-## is\_warn
-
-## is\_warning
-
-## level\_is\_valid
 
 ## log
 
@@ -198,6 +132,79 @@ Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) applicati
 ## remove
 
 ## would\_log
+
+## register
+
+    $plugin->register(Mojolicious->new);
+
+Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) application.
+
+This is a part of the [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin API and it not used directly if you just want 
+to use [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) for logging.
+
+## LOG METHODS
+
+### debug
+
+    $log->debug('How the helicopter did we get here?');
+
+### info
+
+    $log->info('J.F.Y.I');
+
+### notice
+
+    $log->notice ('J.F.Y.I');
+
+### warning / warn
+
+    $log->warning('What are you trying to do Dave?');
+
+### error / err
+
+    $log->err('Do not divide by zero');
+
+### critical / crit
+
+    $log->critical('Do NOT divide by zero');
+
+### alert
+
+    $log->alert('Seriously! do NOT divide by zero');
+
+### fatal / emergency / emerg
+
+    $log->emerg('Unable to render error message');
+
+## LOG LEVEL METHODS
+
+### level\_is\_valid
+
+### is\_alert
+
+### is\_crit
+
+### is\_critical
+
+### is\_debug
+
+### is\_emerg
+
+### is\_emergency
+
+### is\_err
+
+### is\_error
+
+### is\_fatal
+
+### is\_info
+
+### is\_notice
+
+### is\_warn
+
+### is\_warning
 
 # COMPATIBILITY
 
@@ -215,6 +222,14 @@ configurations based on the mode in which the application is running.
 If we would have an Mojolicious application with 5 supported methods:
 
 - development
+- test
+- staging
+- sandbox
+- production
+
+The example configurations could look like the following:
+
+Example development configuration:
 
     # myapp.development.conf
     LogDispatch => {
@@ -224,6 +239,8 @@ If we would have an Mojolicious application with 5 supported methods:
         },
     },
 
+Example test configuration:
+
     # myapp.test.conf
     LogDispatch => {
         file => {
@@ -232,6 +249,8 @@ If we would have an Mojolicious application with 5 supported methods:
         },
     },
 
+Example staging configuration:
+
     # myapp.staging.conf
     LogDispatch => {
         file => {
@@ -239,6 +258,8 @@ If we would have an Mojolicious application with 5 supported methods:
             newline   => 1,
         },
     },
+
+Example sandbox configuration:
 
     # myapp.sandbox.conf
     LogDispatch => {
@@ -256,6 +277,8 @@ If we would have an Mojolicious application with 5 supported methods:
             to        => [ 'operations@mydomain.io' ],
         },
     },
+
+Example production configuration:
 
     # myapp.production.conf
     LogDispatch => {
@@ -280,6 +303,20 @@ If we would have an Mojolicious application with 5 supported methods:
 
 # DEPENDENCIES
 
+- [Mojo::Base](https://metacpan.org/pod/Mojo::Base)
+- [Mojolicious::Plugin](https://metacpan.org/pod/Mojolicious::Plugin)
+- [Mojo::Log](https://metacpan.org/pod/Mojo::Log)
+- [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
+- [Log::Dispatch::File](https://metacpan.org/pod/Log::Dispatch::File)
+- [Log::Dispatch::Screen](https://metacpan.org/pod/Log::Dispatch::Screen)
+
+# TODO
+
+Please see the issue list on Github for a complete list, since this list
+is just sort of a draft of future improvements and ideas.
+
+- Support for format method from [Mojo::Log](https://metacpan.org/pod/Mojo::Log)
+
 # SEE ALSO
 
 - [Mojolicious](https://metacpan.org/pod/Mojolicious)
@@ -291,7 +328,8 @@ If we would have an Mojolicious application with 5 supported methods:
 
 # MOTIVATION
 
-The lack of support on MojoX::Log::Dispatch resulted in this distribution.
+The lack of support on MojoX::Log::Dispatch resulted in this distribution. See [RT:91305](https://rt.cpan.org/Public/Bug/Display.html?id=91305)
+for an example.
 
 # AUTHOR
 
