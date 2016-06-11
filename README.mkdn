@@ -180,6 +180,14 @@ to use [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::
 
 ### level\_is\_valid
 
+A method lifted from [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) returns 
+
+    $log->level_is_valid("PANIC!");
+
+    $log->level_is_valid("DEFCON 5");
+
+See also: [https://metacpan.org/pod/Log::Dispatch#dispatch-level\_is\_valid-string](https://metacpan.org/pod/Log::Dispatch#dispatch-level_is_valid-string)
+
 ### is\_alert
 
 ### is\_crit
