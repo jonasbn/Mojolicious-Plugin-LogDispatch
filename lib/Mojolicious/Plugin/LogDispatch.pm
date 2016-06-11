@@ -446,37 +446,71 @@ See also: L<https://metacpan.org/pod/Log::Dispatch#dispatch-level_is_valid-strin
 
 =head3 is_alert
 
+    # TODO
+
 =head3 is_crit
+
+    # TODO
 
 =head3 is_critical
 
+    # TODO
+
 =head3 is_debug
+
+    # TODO
 
 =head3 is_emerg
 
+    # TODO
+
 =head3 is_emergency
+
+    # TODO
 
 =head3 is_err
 
+    # TODO
+
 =head3 is_error
+
+    # TODO
 
 =head3 is_fatal
 
+    # TODO
+
 =head3 is_info
+
+    # TODO
 
 =head3 is_notice
 
+    # TODO
+
 =head3 is_warn
 
+    # TODO
+
 =head3 is_warning
+
+    # TODO
 
 =head1 COMPATIBILITY
 
 =head2 Mojo::Log
 
-=head2 MojoX::Log::Dispatch
+    # TODO
+
+=head2 Log::Dispatch
+
+    # TODO
 
 =head1 INCOMPATIBILITIES
+
+=head2 MojoX::Log::Dispatch
+
+    # TODO
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
@@ -571,7 +605,11 @@ Example production configuration:
 
 =head1 BUGS AND LIMITATIONS
 
+    # TODO
+
 =head1 DIAGNOSTICS
+
+    # TODO
 
 =head1 DEPENDENCIES
 
@@ -622,8 +660,20 @@ is just sort of a draft of future improvements and ideas.
 
 =head1 MOTIVATION
 
-The lack of support on MojoX::Log::Dispatch resulted in this distribution. See L<RT:91305|https://rt.cpan.org/Public/Bug/Display.html?id=91305>
+The lack of support on L<MojoX::Log::Dispatch> resulted in this distribution. See L<RT:91305|https://rt.cpan.org/Public/Bug/Display.html?id=91305>
 for an example.
+
+=head ACKNOWLEDGEMENTS
+
+=over
+
+=item * Konstantin Kapitanov, (KAKADU), author of L<MojoX::Log::Dispatch>, cool module and the base of this module
+
+=item * Dave Rolsky (DROLSKY), author of L<Log::Dispatch>
+
+=item * Sebastian Riedel (SRI) and the team behind L<Mojolicious>
+
+=back 
 
 =head1 AUTHOR
 
@@ -631,8 +681,8 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 LICENSE AND COPYRIGHT
 
-The implementation is derived from MojoX::Log::Dispatch which is no longer 
-supported
+The implementation is derived from L<MojoX::Log::Dispatch> which is no longer 
+actively supported
 
 Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
 
