@@ -22,3 +22,5 @@ local/
 cpanfile.snapshot
 *.tar.gz
 Mojolicious-Plugin-LogDispatch-*.*/
+*.sublime-project
+*.sublime-workspace

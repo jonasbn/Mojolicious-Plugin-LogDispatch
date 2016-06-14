@@ -8,6 +8,7 @@ use base qw(Mojo::Log); #inherting path
 use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
+use Module::Load; #load
 
 our $VERSION = '0.01';
 
@@ -21,13 +22,26 @@ sub register {
     my $orig_log = $app->log;
     $self->orig_log($orig_log);
 
-    my $path = $app->log->path;
-    if ($path) {
-        $app->log->debug("Resolved path: $path");
-        $self->path($path);
+    if ($conf->{LogDispatch}) {
+        my $logdispatch = Log::Dispatch->new();
+        foreach my $log_dispatch_submodule (keys %{$conf->{LogDispatch}}) {
+
+            load $log_dispatch_submodule;
+
+            my $logger = $log_dispatch_submodule->new(
+                %{$conf->{LogDispatch}->{$log_dispatch_submodule}}
+            );
+            $self->handle->add($logger);
+        }
+
+    } else {
+        my $path = $app->log->path;
+        if ($path) {
+            $app->log->debug("Resolved path: $path");
+            $self->path($path);
+        }
     }
 
-    #my $log = $self->handle();
     my $log = $self;
     if ($log) {
         $app->log->info('Instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->handle->outputs);
@@ -223,17 +237,21 @@ This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
 =head1 SYNOPSIS
 
-    # Mojolicious application using shorthand
+    # Mojolicious application 
+    # shorthand
     $self->plugin('LogDispatch');
-
-    # Mojolicious application using longform
+    # longform
     $self->plugin('Mojolicious::Plugin::LogDispatch');
+    # with config
+    $self->plugin('Mojolicious::Plugin::LogDispatch', $config);
 
-    # Mojolicious::Lite using shorthand
+    # Mojolicious::Lite application
+    # shorthand
     plugin 'LogDispatch';
-
-    # Mojolicious::Lite using longform
-    $self->plugin('Mojolicious::Plugin::LogDispatch');
+    # longform
+    plugin('Mojolicious::Plugin::LogDispatch');
+    # with config
+    plugin('Mojolicious::Plugin::LogDispatch', $config);
 
     # Mojo::Log compatibility
     $log->debug('How the helicopter did we get here?');
@@ -533,13 +551,14 @@ If we would have an Mojolicious application with 5 supported methods:
 
 =back
 
-The example configurations could look like the following:
+The example configurations could look like the following, please note the indication of 
+the plugin for use in the configuration 'LogDipatch':
 
 Example development configuration:
 
     # myapp.development.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'debug',
             newline => 1,
         },
@@ -549,7 +568,7 @@ Example test configuration:
 
     # myapp.test.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'info',
             newline => 1,
         },
@@ -559,7 +578,7 @@ Example staging configuration:
 
     # myapp.staging.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'info',
             newline   => 1,
         },
@@ -569,7 +588,7 @@ Example sandbox configuration:
 
     # myapp.sandbox.conf
     LogDispatch => {
-        Syslog => {
+        'Log::Dispatch::Syslog' => {
             min_level => 'warn',
             newline   => 1,
             ident     => 'myapp',
@@ -588,7 +607,7 @@ Example production configuration:
 
     # myapp.production.conf
     LogDispatch => {
-        Syslog => {
+        'Log::Dispatch::Syslog' => {
             min_level => 'warn',
             newline   => 1,
             ident     => 'myapp',
@@ -609,7 +628,30 @@ Example production configuration:
 
 =head1 DIAGNOSTICS
 
-    # TODO
+head2 Can't locate X
+
+This error is thrown if you have specified a Log::Dispatch::* module, which is not installed.
+
+Example:
+
+    # Configuration
+    'Log::Dispatch::Email::MailSender' => {
+        min_level => 'critical',
+        newline   => 1,
+        subject   => 'MyApp (production)',
+        from      => 'myapp+production@mydomain.io',
+        to        => [ 'operations@mydomain.io' ],
+    },
+
+    # Error message
+    Can't locate Mail/Sender.pm in @INC (you may need to install the Mail::Sender module)
+
+=head3
+
+Remedy is to installed the necessary module.
+
+Please note that the L<Log::Dispatch> distribution contains several loggers like L<Log::Dispatch::File>, 
+L<Log::Dispatch::Screen> and L<Log::Dispatch::Syslog> and these do not require additional installation.
 
 =head1 DEPENDENCIES
 

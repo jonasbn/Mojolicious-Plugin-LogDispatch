@@ -8,17 +8,21 @@ This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
 # SYNOPSIS
 
-    # Mojolicious application using shorthand
+    # Mojolicious application 
+    # shorthand
     $self->plugin('LogDispatch');
-
-    # Mojolicious application using longform
+    # longform
     $self->plugin('Mojolicious::Plugin::LogDispatch');
+    # with config
+    $self->plugin('Mojolicious::Plugin::LogDispatch', $config);
 
-    # Mojolicious::Lite using shorthand
+    # Mojolicious::Lite application
+    # shorthand
     plugin 'LogDispatch';
-
-    # Mojolicious::Lite using longform
-    $self->plugin('Mojolicious::Plugin::LogDispatch');
+    # longform
+    plugin('Mojolicious::Plugin::LogDispatch');
+    # with config
+    plugin('Mojolicious::Plugin::LogDispatch', $config);
 
     # Mojo::Log compatibility
     $log->debug('How the helicopter did we get here?');
@@ -190,37 +194,71 @@ See also: [https://metacpan.org/pod/Log::Dispatch#dispatch-level\_is\_valid-stri
 
 ### is\_alert
 
+    # TODO
+
 ### is\_crit
+
+    # TODO
 
 ### is\_critical
 
+    # TODO
+
 ### is\_debug
+
+    # TODO
 
 ### is\_emerg
 
+    # TODO
+
 ### is\_emergency
+
+    # TODO
 
 ### is\_err
 
+    # TODO
+
 ### is\_error
+
+    # TODO
 
 ### is\_fatal
 
+    # TODO
+
 ### is\_info
+
+    # TODO
 
 ### is\_notice
 
+    # TODO
+
 ### is\_warn
 
+    # TODO
+
 ### is\_warning
+
+    # TODO
 
 # COMPATIBILITY
 
 ## Mojo::Log
 
-## MojoX::Log::Dispatch
+    # TODO
+
+## Log::Dispatch
+
+    # TODO
 
 # INCOMPATIBILITIES
+
+## MojoX::Log::Dispatch
+
+    # TODO
 
 # CONFIGURATION AND ENVIRONMENT
 
@@ -235,13 +273,14 @@ If we would have an Mojolicious application with 5 supported methods:
 - sandbox
 - production
 
-The example configurations could look like the following:
+The example configurations could look like the following, please note the indication of 
+the plugin for use in the configuration 'LogDipatch':
 
 Example development configuration:
 
     # myapp.development.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'debug',
             newline => 1,
         },
@@ -251,7 +290,7 @@ Example test configuration:
 
     # myapp.test.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'info',
             newline => 1,
         },
@@ -261,7 +300,7 @@ Example staging configuration:
 
     # myapp.staging.conf
     LogDispatch => {
-        file => {
+        'Log::Dispatch::File' => {
             min_level => 'info',
             newline   => 1,
         },
@@ -271,7 +310,7 @@ Example sandbox configuration:
 
     # myapp.sandbox.conf
     LogDispatch => {
-        Syslog => {
+        'Log::Dispatch::Syslog' => {
             min_level => 'warn',
             newline   => 1,
             ident     => 'myapp',
@@ -290,7 +329,7 @@ Example production configuration:
 
     # myapp.production.conf
     LogDispatch => {
-        Syslog => {
+        'Log::Dispatch::Syslog' => {
             min_level => 'warn',
             newline   => 1,
             ident     => 'myapp',
@@ -307,7 +346,34 @@ Example production configuration:
 
 # BUGS AND LIMITATIONS
 
+    # TODO
+
 # DIAGNOSTICS
+
+head2 Can't locate X
+
+This error is thrown if you have specified a Log::Dispatch::\* module, which is not installed.
+
+Example:
+
+    # Configuration
+    'Log::Dispatch::Email::MailSender' => {
+        min_level => 'critical',
+        newline   => 1,
+        subject   => 'MyApp (production)',
+        from      => 'myapp+production@mydomain.io',
+        to        => [ 'operations@mydomain.io' ],
+    },
+
+    # Error message
+    Can't locate Mail/Sender.pm in @INC (you may need to install the Mail::Sender module)
+
+### 
+
+Remedy is to installed the necessary module.
+
+Please note that the [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) distribution contains several loggers like [Log::Dispatch::File](https://metacpan.org/pod/Log::Dispatch::File), 
+[Log::Dispatch::Screen](https://metacpan.org/pod/Log::Dispatch::Screen) and [Log::Dispatch::Syslog](https://metacpan.org/pod/Log::Dispatch::Syslog) and these do not require additional installation.
 
 # DEPENDENCIES
 
@@ -336,8 +402,12 @@ is just sort of a draft of future improvements and ideas.
 
 # MOTIVATION
 
-The lack of support on MojoX::Log::Dispatch resulted in this distribution. See [RT:91305](https://rt.cpan.org/Public/Bug/Display.html?id=91305)
+The lack of support on [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch) resulted in this distribution. See [RT:91305](https://rt.cpan.org/Public/Bug/Display.html?id=91305)
 for an example.
+
+- Konstantin Kapitanov, (KAKADU), author of [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), cool module and the base of this module
+- Dave Rolsky (DROLSKY), author of [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
+- Sebastian Riedel (SRI) and the team behind [Mojolicious](https://metacpan.org/pod/Mojolicious)
 
 # AUTHOR
 
@@ -345,11 +415,19 @@ Jonas B. Nielsen, (jonasbn) - `<jonasbn@cpan.org>`
 
 # LICENSE AND COPYRIGHT
 
-The implementation is derived from MojoX::Log::Dispatch which is no longer 
-supported
+The implementation is derived from [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch) which is no longer 
+actively supported
 
 Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
 
 Mojolicious-Plugin-LogDispatch is released under the Artistic License 2.0
 
 MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights reserved.
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 483:
+
+    Unknown directive: =head

@@ -5,7 +5,6 @@ use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-# Documentation browser under "/perldoc"
 plugin 'Mojolicious::Plugin::LogDispatch';
 
 get '/' => sub {
@@ -51,7 +50,6 @@ get '/fatal' => sub {
   $self->app->log->fatal('logging using fatal');
   $self->render('index', level => 'fatal');
 };
-
 
 app->start;
 
