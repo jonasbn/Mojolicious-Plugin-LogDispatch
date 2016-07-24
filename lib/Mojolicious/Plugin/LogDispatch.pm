@@ -663,7 +663,7 @@ Example production configuration:
 
 =head1 DIAGNOSTICS
 
-head2 Can't locate X
+=head2 Can't locate X
 
 This error is thrown if you have specified a Log::Dispatch::* module, which is not installed.
 
