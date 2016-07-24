@@ -9,6 +9,9 @@ use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
 use Module::Load; #load
+use DateTime;
+
+use utf8;
 
 our $VERSION = '0.01';
 
@@ -65,6 +68,21 @@ __PACKAGE__->attr(
             $dispatcher = Log::Dispatch->new(@_);
         }
 
+        $self->format(
+            sub {
+                my ($time, $level, $msg) = @_;
+                my $dt = DateTime->from_epoch( epoch => $time );
+
+                my $day_abbr   = $dt->day_abbr;
+                my $month_abbr = $dt->month_abbr; # Jan, Feb, ...
+                my $day        = $dt->day; 
+                my $hms        = $dt->hms;
+                my $year       = $dt->year;
+
+                return "[$day_abbr $month_abbr $day $hms $year] [$level] $msg";
+            }
+        );
+
         if ( $self->path ) {
             $self->orig_log->debug("we have a path: ", $self->path);
 
@@ -105,6 +123,7 @@ __PACKAGE__->attr(
 
 __PACKAGE__->attr('orig_log');
 __PACKAGE__->attr('callbacks');
+__PACKAGE__->attr('format');
 #__PACKAGE__->attr('history'); #TODO
 #__PACKAGE__->attr('message'); #TODO
 #__PACKAGE__->attr('max_history_size'); #TODO
@@ -128,7 +147,20 @@ sub log {
     $level = lc $level;
     return $self unless $level && $self->is_level($level);
 
+    my @formatted_msgs = ();
+    my $format_cb = $self->format();
+
+    if ($format_cb) {
+        foreach my $msg (@msgs) {
+            push @formatted_msgs, &{$format_cb}(time(), $level, $msg);
+        }
+    }
+
+    if (scalar @formatted_msgs) {
+        @msgs = @formatted_msgs;
+    }
     $self->handle->log( 'level' => $level, 'message' => @msgs );
+
     return $self;
 }
 
