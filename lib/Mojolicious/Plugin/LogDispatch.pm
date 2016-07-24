@@ -680,7 +680,7 @@ Example:
 
 =head3
 
-Remedy is to installed the necessary module.
+Remedy is to install the necessary module.
 
 Please note that the L<Log::Dispatch> distribution contains several loggers like L<Log::Dispatch::File>, 
 L<Log::Dispatch::Screen> and L<Log::Dispatch::Syslog> and these do not require additional installation.
