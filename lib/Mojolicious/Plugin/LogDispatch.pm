@@ -326,8 +326,11 @@ This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
     $self->log($dispatch);
      
-    #and then
-    $self->log->debug("Why isn't this working?");  
+    # and then
+    $self->log->debug("Why isn't this working?");
+
+    # will render (with the appropriate date)
+    [Sun Jul 24 12:29:39 2016] [debug] Why isn't this working?
 
 =head1 DESCRIPTION
 
