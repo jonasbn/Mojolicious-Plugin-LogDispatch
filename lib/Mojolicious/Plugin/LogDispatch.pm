@@ -705,14 +705,7 @@ L<Log::Dispatch::Screen> and L<Log::Dispatch::Syslog> and these do not require a
 
 =head1 TODO
 
-Please see the issue list on Github for a complete list, since this list
-is just sort of a draft of future improvements and ideas.
-
-=over
-
-=item * Support for format method from L<Mojo::Log>
-
-=back
+Please see the issue list on Github for a complete list.
 
 =head1 SEE ALSO
 
