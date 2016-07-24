@@ -499,55 +499,55 @@ See also: L<https://metacpan.org/pod/Log::Dispatch#dispatch-level_is_valid-strin
 
 =head3 is_alert
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_crit
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_critical
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_debug
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_emerg
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_emergency
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_err
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_error
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_fatal
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_info
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_notice
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_warn
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head3 is_warning
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 =head1 COMPATIBILITY
 
