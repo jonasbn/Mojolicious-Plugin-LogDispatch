@@ -53,6 +53,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                               min_level => 'warning',
                                               filename => $warning_log ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     ok( $dispatch->is_warning, "ok is_warning");
     ok( $dispatch->is_warn, "ok is_warn");
     ok( $dispatch->is_error, "ok is_error");
@@ -75,6 +77,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
     $dispatch->add( Log::Dispatch::File->new( name => 'file1',
                                               min_level => 'emerg',
                                               filename => $emerg_log ) );
+
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
 
     ok( $dispatch->is_emerg, "ok is_emerg");
     ok(!$dispatch->is_error, "ok it isnt is_error");
@@ -123,6 +127,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                               max_level => 'crit',
                                               filename => $max_log ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     $dispatch->emerg("emergency\n" );
     $dispatch->crit( "critical\n" );
     $dispatch->fatal( "fatak is also critical\n" );
@@ -151,6 +157,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                                 max_level => 'alert',
                                               ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     $dispatch->warning('esrever' );
 
     is( $string, 'reverse',
@@ -170,6 +178,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                                 min_level => 'warning',
                                                 max_level => 'alert',
                                               ) );
+
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
 
     $dispatch->log(  'warning' => 'esrever' );
 
@@ -194,6 +204,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                                 max_level => 'alert',
                                                 callbacks => $reverse ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     $dispatch->log( 'warning' => 'esrever' );
 
     is( $string, 'reverse',
@@ -214,6 +226,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                                 max_level => 'alert',
                                                 callbacks => [ $reverse, $uc ] ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     $dispatch->log(  'warning' => 'esrever' );
 
     is( $string, 'REVERSE',
@@ -233,6 +247,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
                                                 max_level => 'alert',
                                                 stderr => 0 ) );
 
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
     $dispatch->log( 'warning' => 'esrever' );
 
     is( $string, 'WARNING',
@@ -246,6 +262,8 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
     $dispatch->add
         ( Log::Dispatch::Screen->new( name => 'yomama',
                                       min_level => 'alert' ) );
+
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
 
     ok( $dispatch->output('yomama'),
         "yomama output should exist" );
