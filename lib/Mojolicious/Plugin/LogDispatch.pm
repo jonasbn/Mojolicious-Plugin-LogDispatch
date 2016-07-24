@@ -704,6 +704,8 @@ L<Log::Dispatch::Screen> and L<Log::Dispatch::Syslog> and these do not require a
 
 =item * L<Log::Dispatch::Screen>
 
+=item * L<DateTime>
+
 =back
 
 =head1 TODO

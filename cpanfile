@@ -2,6 +2,7 @@ requires 'Mojolicious::Plugin';
 requires 'Log::Dispatch';
 requires 'Log::Dispatch::File';
 requires 'Log::Dispatch::Screen';
+requires 'DateTime';
 
 on 'test' => sub {
   requires 'FindBin';
