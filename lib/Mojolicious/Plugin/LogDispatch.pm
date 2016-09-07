@@ -261,7 +261,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
+Mojolicious::Plugin::LogDispatch - Mojolicious Plugin for log dispatch using Log::Dispatch
 
 =head1 VERSION
 
@@ -418,6 +418,40 @@ depicted in the below figure:
 
 =end markdown
 
+=begin html
+
+<table>
+<tr>
+    <th>Mojo::Log</th><th>Log::Dispatch</th><th>Syslog</th>
+</tr>
+<tr>
+    <td>&nbsp;</td><td>emergency</td><td>emerg</td>
+</tr>
+<tr>
+    <td>&nbsp;</td><td>alert</td><td>alert</td>
+</tr>
+<tr>
+    <td>fatal</td><td>critical</td><td>crit</td>
+</tr>
+<tr>
+    <td>error</td><td>error</td><td>err</td>
+</tr>
+<tr>
+    <td>warn</td><td>warning</td><td>warning</td>
+</tr>
+<tr>
+    <td>&nbsp;</td><td>notice</td><td>notice</td>
+</tr>
+<tr>
+    <td>info</td><td>info</td><td>info</td>
+</tr>
+<tr>
+    <td>debug</td><td>debug</td><td>debug</td>
+</tr>
+</table>
+
+=end html
+
 
 =head1 SUBROUTINES/METHODS
 
@@ -442,14 +476,44 @@ In addition L<Mojolicious::Plugin::LogDispatch> inherits from L<Mojo::Log>
 
 =head2 would_log
 
+Given a log level, returns true or false to indicate whether anything would be logged for the specified log level.
+
 =head2 register
 
-  $plugin->register(Mojolicious->new);
+    $plugin->register(Mojolicious->new);
 
-Register plugin in L<Mojolicious> application.
+Registers plugin in L<Mojolicious> application.
 
 This is a part of the L<Mojolicious> plugin API and it not used directly if you just want 
 to use L<Mojolicious::Plugin::LogDispatch> for logging.
+
+When using the plugin in your Mojolicious application:
+
+    # Mojolicious::Lite longform    
+    plugin 'Mojolicious::Plugin::LogDispatch';
+
+    # Mojolicious::Lite shortform
+    plugin 'LogDispatch';
+
+    # Mojolicious::Lite shortform with config
+    plugin 'LogDispatch', $config;
+
+    # Mojolicious longform in your startup method
+    $self->plugin('Mojolicious::Plugin::LogDispatch');
+
+    # Mojolicious shortform in your startup method
+    $self->plugin('LogDispatch');
+
+    # Mojolicious shortform with config
+    $self->plugin('LogDispatch', $config);
+
+=head2 format
+
+Format can be used to define a callback to format the log entry.
+
+The default is:
+
+    "[$day_abbr $month_abbr $day $hms $year] [$level] $msg\n";    
 
 =head2 LOG METHODS
 
@@ -473,7 +537,7 @@ to use L<Mojolicious::Plugin::LogDispatch> for logging.
 
     $log->err('Do not divide by zero');
 
-=head3 critical / crit
+=head3 critical / crit / fatal
 
     $log->critical('Do NOT divide by zero');
 
@@ -481,7 +545,7 @@ to use L<Mojolicious::Plugin::LogDispatch> for logging.
 
     $log->alert('Seriously! do NOT divide by zero');
 
-=head3 fatal / emergency / emerg
+=head3 emergency / emerg
 
     $log->emerg('Unable to render error message');
 
@@ -553,24 +617,62 @@ Returns true if the handler will log this level else false.
 
 =head2 Mojo::Log
 
-    # TODO
+Default L<Mojolicious::Plugin::LogDispatch> mimicks the behaviour of L<Mojo::Log>.
+
+L<Mojolicious::Plugin::LogDispatch> logs to file and screen in the following format:
+
+    [Wed Sep 7 19:28:53 2016] [debug] this should not be happening
+
+=head3 Logging Methods
+
+=item * debug
+
+=item * info
+
+=item * warn
+
+=item * error
+
+=item * fatal
+
+=back
 
 =head2 Log::Dispatch
 
-    # TODO
+=head3 Logging Methods
+
+=over
+
+=item * debug
+
+=item * info
+
+=item * notice
+
+=item * warning
+
+=item * error
+
+=item * critical
+
+=item * alert
+
+=item * emergency
+
+=back
 
 =head1 INCOMPATIBILITIES
 
 =head2 MojoX::Log::Dispatch
 
-    # TODO
+In L<MojoX::Log::Dispatch> C<fatal> was same level as C<emergency>. In L<Mojolicious::Plugin::LogDispatch> C<fatal> is aligned with C<critical>.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
 One of the great features of Mojolicious is it's ability to run with segregated 
 configurations based on the mode in which the application is running.
 
-If we would have an Mojolicious application with 5 supported methods:
+If we have an Mojolicious application with 5 supported methods:
 
 =over
 
@@ -659,7 +761,7 @@ Example production configuration:
 
 =head1 BUGS AND LIMITATIONS
 
-    # TODO
+Probably plenty of bugs, let me know and they will be fixed. Limits also, they will be addressed if they do not spoil the distribution. 
 
 =head1 DIAGNOSTICS
 
