@@ -65,8 +65,11 @@ This documentation describes version 0.01 of Mojolicious::Plugin::LogDispatch
 
     $self->log($dispatch);
      
-    #and then
-    $self->log->debug("Why isn't this working?");  
+    # and then
+    $self->log->debug("Why isn't this working?");
+
+    # will render (with the appropriate date)
+    [Sun Jul 24 12:29:39 2016] [debug] Why isn't this working?
 
 # DESCRIPTION
 
@@ -194,55 +197,55 @@ See also: [https://metacpan.org/pod/Log::Dispatch#dispatch-level\_is\_valid-stri
 
 ### is\_alert
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_crit
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_critical
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_debug
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_emerg
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_emergency
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_err
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_error
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_fatal
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_info
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_notice
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_warn
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 ### is\_warning
 
-    # TODO
+Returns true if the handler will log this level else false.
 
 # COMPATIBILITY
 
@@ -350,7 +353,7 @@ Example production configuration:
 
 # DIAGNOSTICS
 
-head2 Can't locate X
+## Can't locate X
 
 This error is thrown if you have specified a Log::Dispatch::\* module, which is not installed.
 
@@ -370,7 +373,7 @@ Example:
 
 ### 
 
-Remedy is to installed the necessary module.
+Remedy is to install the necessary module.
 
 Please note that the [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) distribution contains several loggers like [Log::Dispatch::File](https://metacpan.org/pod/Log::Dispatch::File), 
 [Log::Dispatch::Screen](https://metacpan.org/pod/Log::Dispatch::Screen) and [Log::Dispatch::Syslog](https://metacpan.org/pod/Log::Dispatch::Syslog) and these do not require additional installation.
@@ -383,13 +386,11 @@ Please note that the [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch) dis
 - [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 - [Log::Dispatch::File](https://metacpan.org/pod/Log::Dispatch::File)
 - [Log::Dispatch::Screen](https://metacpan.org/pod/Log::Dispatch::Screen)
+- [DateTime](https://metacpan.org/pod/DateTime)
 
 # TODO
 
-Please see the issue list on Github for a complete list, since this list
-is just sort of a draft of future improvements and ideas.
-
-- Support for format method from [Mojo::Log](https://metacpan.org/pod/Mojo::Log)
+Please see the issue list on Github for a complete list.
 
 # SEE ALSO
 
@@ -428,6 +429,6 @@ MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights re
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 483:
+- Around line 481:
 
     Unknown directive: =head
