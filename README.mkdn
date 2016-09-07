@@ -512,10 +512,6 @@ MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights re
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 371:
-
-    '=item' outside of any '=over'
-
-- Around line 583:
+- Around line 585:
 
     Unknown directive: =head

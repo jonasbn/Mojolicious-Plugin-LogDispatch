@@ -625,6 +625,8 @@ L<Mojolicious::Plugin::LogDispatch> logs to file and screen in the following for
 
 =head3 Logging Methods
 
+=over
+
 =item * debug
 
 =item * info
