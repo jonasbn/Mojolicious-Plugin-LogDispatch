@@ -839,7 +839,7 @@ Please see the issue list on Github for a complete list.
 The lack of support on L<MojoX::Log::Dispatch> resulted in this distribution. See L<RT:91305|https://rt.cpan.org/Public/Bug/Display.html?id=91305>
 for an example.
 
-=head ACKNOWLEDGEMENTS
+=head1 ACKNOWLEDGEMENTS
 
 =over
 

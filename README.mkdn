@@ -489,6 +489,8 @@ Please see the issue list on Github for a complete list.
 The lack of support on [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch) resulted in this distribution. See [RT:91305](https://rt.cpan.org/Public/Bug/Display.html?id=91305)
 for an example.
 
+# ACKNOWLEDGEMENTS
+
 - Konstantin Kapitanov, (KAKADU), author of [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch), cool module and the base of this module
 - Dave Rolsky (DROLSKY), author of [Log::Dispatch](https://metacpan.org/pod/Log::Dispatch)
 - Sebastian Riedel (SRI) and the team behind [Mojolicious](https://metacpan.org/pod/Mojolicious)
@@ -507,11 +509,3 @@ Mojolicious-Plugin-LogDispatch is (C) by Jonas B. Nielsen, (jonasbn) 2016
 Mojolicious-Plugin-LogDispatch is released under the Artistic License 2.0
 
 MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights reserved.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 585:
-
-    Unknown directive: =head
