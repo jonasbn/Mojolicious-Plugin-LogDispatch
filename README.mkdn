@@ -223,7 +223,7 @@ The default is:
 
 ### notice
 
-    $log->notice ('J.F.Y.I');
+    $log->notice ('Please take notice');
 
 ### warning / warn
 
@@ -239,7 +239,7 @@ The default is:
 
 ### alert
 
-    $log->alert('Seriously! do NOT divide by zero');
+    $log->alert('Alert SOMEBODY is dividing by zero');
 
 ### emergency / emerg
 

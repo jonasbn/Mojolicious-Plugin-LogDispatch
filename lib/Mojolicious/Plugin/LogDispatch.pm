@@ -527,7 +527,7 @@ The default is:
 
 =head3 notice
 
-    $log->notice ('J.F.Y.I');
+    $log->notice ('Please take notice');
 
 =head3 warning / warn
 
@@ -543,7 +543,7 @@ The default is:
 
 =head3 alert
 
-    $log->alert('Seriously! do NOT divide by zero');
+    $log->alert('Alert SOMEBODY is dividing by zero');
 
 =head3 emergency / emerg
 
