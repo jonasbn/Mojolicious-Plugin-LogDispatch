@@ -1,6 +1,6 @@
 # NAME
 
-Mojolicious::Plugin::LogDispatch - Mojolicious Plugin
+Mojolicious::Plugin::LogDispatch - Mojolicious Plugin for log dispatch using Log::Dispatch
 
 # VERSION
 
@@ -117,6 +117,38 @@ depicted in the below figure:
 | info      | info          | info    |
 | debug     | debug         | debug   |
 
+<div>
+    <table>
+    <tr>
+        <th>Mojo::Log</th><th>Log::Dispatch</th><th>Syslog</th>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>emergency</td><td>emerg</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>alert</td><td>alert</td>
+    </tr>
+    <tr>
+        <td>fatal</td><td>critical</td><td>crit</td>
+    </tr>
+    <tr>
+        <td>error</td><td>error</td><td>err</td>
+    </tr>
+    <tr>
+        <td>warn</td><td>warning</td><td>warning</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>notice</td><td>notice</td>
+    </tr>
+    <tr>
+        <td>info</td><td>info</td><td>info</td>
+    </tr>
+    <tr>
+        <td>debug</td><td>debug</td><td>debug</td>
+    </tr>
+    </table>
+</div>
+
 # SUBROUTINES/METHODS
 
 [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) inherits all methods from
@@ -140,14 +172,44 @@ In addition [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolici
 
 ## would\_log
 
+Given a log level, returns true or false to indicate whether anything would be logged for the specified log level.
+
 ## register
 
     $plugin->register(Mojolicious->new);
 
-Register plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) application.
+Registers plugin in [Mojolicious](https://metacpan.org/pod/Mojolicious) application.
 
 This is a part of the [Mojolicious](https://metacpan.org/pod/Mojolicious) plugin API and it not used directly if you just want 
 to use [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) for logging.
+
+When using the plugin in your Mojolicious application:
+
+    # Mojolicious::Lite longform    
+    plugin 'Mojolicious::Plugin::LogDispatch';
+
+    # Mojolicious::Lite shortform
+    plugin 'LogDispatch';
+
+    # Mojolicious::Lite shortform with config
+    plugin 'LogDispatch', $config;
+
+    # Mojolicious longform in your startup method
+    $self->plugin('Mojolicious::Plugin::LogDispatch');
+
+    # Mojolicious shortform in your startup method
+    $self->plugin('LogDispatch');
+
+    # Mojolicious shortform with config
+    $self->plugin('LogDispatch', $config);
+
+## format
+
+Format can be used to define a callback to format the log entry.
+
+The default is:
+
+    "[$day_abbr $month_abbr $day $hms $year] [$level] $msg\n";    
 
 ## LOG METHODS
 
@@ -171,7 +233,7 @@ to use [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::
 
     $log->err('Do not divide by zero');
 
-### critical / crit
+### critical / crit / fatal
 
     $log->critical('Do NOT divide by zero');
 
@@ -179,7 +241,7 @@ to use [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::
 
     $log->alert('Seriously! do NOT divide by zero');
 
-### fatal / emergency / emerg
+### emergency / emerg
 
     $log->emerg('Unable to render error message');
 
@@ -251,24 +313,45 @@ Returns true if the handler will log this level else false.
 
 ## Mojo::Log
 
-    # TODO
+Default [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) mimicks the behaviour of [Mojo::Log](https://metacpan.org/pod/Mojo::Log).
+
+[Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) logs to file and screen in the following format:
+
+    [Wed Sep 7 19:28:53 2016] [debug] this should not be happening
+
+### Logging Methods
+
+- debug
+- info
+- warn
+- error
+- fatal
 
 ## Log::Dispatch
 
-    # TODO
+### Logging Methods
+
+- debug
+- info
+- notice
+- warning
+- error
+- critical
+- alert
+- emergency
 
 # INCOMPATIBILITIES
 
 ## MojoX::Log::Dispatch
 
-    # TODO
+In [MojoX::Log::Dispatch](https://metacpan.org/pod/MojoX::Log::Dispatch) `fatal` was same level as `emergency`. In [Mojolicious::Plugin::LogDispatch](https://metacpan.org/pod/Mojolicious::Plugin::LogDispatch) `fatal` is aligned with `critical`.
 
 # CONFIGURATION AND ENVIRONMENT
 
 One of the great features of Mojolicious is it's ability to run with segregated 
 configurations based on the mode in which the application is running.
 
-If we would have an Mojolicious application with 5 supported methods:
+If we have an Mojolicious application with 5 supported methods:
 
 - development
 - test
@@ -277,7 +360,7 @@ If we would have an Mojolicious application with 5 supported methods:
 - production
 
 The example configurations could look like the following, please note the indication of 
-the plugin for use in the configuration 'LogDipatch':
+the plugin for use in the configuration 'LogDispatch':
 
 Example development configuration:
 
@@ -349,7 +432,7 @@ Example production configuration:
 
 # BUGS AND LIMITATIONS
 
-    # TODO
+Probably plenty of bugs, let me know and they will be fixed. Limits also, they will be addressed if they do not spoil the distribution. 
 
 # DIAGNOSTICS
 
@@ -429,6 +512,10 @@ MojoX::Log::Dispatch is (C) by Konstantin Kapitanov, (kakadu) 2009 all rights re
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 481:
+- Around line 371:
+
+    '=item' outside of any '=over'
+
+- Around line 583:
 
     Unknown directive: =head
