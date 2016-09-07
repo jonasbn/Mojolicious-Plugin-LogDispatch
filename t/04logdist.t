@@ -131,7 +131,7 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
 
     $dispatch->emerg("emergency\n" );
     $dispatch->crit( "critical\n" );
-    $dispatch->fatal( "fatak is also critical\n" );
+    $dispatch->fatal( "fatal is also critical\n" );
     $dispatch->critical( "critical\n" );
 
     undef $dispatch; # close file handles
