@@ -587,7 +587,7 @@ If we would have an Mojolicious application with 5 supported methods:
 =back
 
 The example configurations could look like the following, please note the indication of 
-the plugin for use in the configuration 'LogDipatch':
+the plugin for use in the configuration 'LogDispatch':
 
 Example development configuration:
 
