@@ -3,16 +3,19 @@ use Mojo::Base -strict;
 use Test::More;
 use Mojolicious::Lite;
 use Test::Mojo;
+use File::Temp qw(tempdir);
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
+
+my $dir = tempdir( CLEANUP => 1 );
 
 my $cfg = {
     LogDispatch => {
         'Log::Dispatch::File' => {
             min_level => 'debug',
             newline   => 1,
-            filename  => 'shorthand_with_config.log',
+            filename  => "$dir/shorthand_with_config.log",
         },
     },
 };

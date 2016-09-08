@@ -5,6 +5,7 @@ requires 'Log::Dispatch::Screen';
 requires 'DateTime';
 
 on 'test' => sub {
+  requires 'File::Temp';
   requires 'FindBin';
   requires 'Test::Mojo';
   requires 'Test::More','0.88';
