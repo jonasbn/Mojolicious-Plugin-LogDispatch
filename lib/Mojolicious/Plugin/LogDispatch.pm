@@ -84,7 +84,7 @@ __PACKAGE__->attr(
                 my $year       = $dt->year;
 
                 return
-                    "[$day_abbr $month_abbr $day $hms $year] [$level] $msg\n";
+                    "[$day_abbr $month_abbr $day $hms $year] [$level] $msg";
             }
         );
 
