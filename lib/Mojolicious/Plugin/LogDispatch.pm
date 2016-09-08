@@ -3,19 +3,19 @@ package Mojolicious::Plugin::LogDispatch;
 use strict;
 use warnings;
 use Mojo::Base qw(Mojolicious::Plugin);
-use base qw(Mojo::Log); #inherting path
+use base qw(Mojo::Log);    #inherting path
 
 use Log::Dispatch;
 use Log::Dispatch::File;
 use Log::Dispatch::Screen;
-use Module::Load; #load
+use Module::Load;          #load
 use DateTime;
 
 use utf8;
 
 our $VERSION = '0.01';
 
-use constant TRUE => 1; # for readability
+use constant TRUE => 1;    # for readability
 
 sub register {
     my ( $self, $app, $conf ) = @_;
@@ -25,19 +25,20 @@ sub register {
     my $orig_log = $app->log;
     $self->orig_log($orig_log);
 
-    if ($conf->{LogDispatch}) {
+    if ( $conf->{LogDispatch} ) {
         my $logdispatch = Log::Dispatch->new();
-        foreach my $log_dispatch_submodule (keys %{$conf->{LogDispatch}}) {
+        foreach my $log_dispatch_submodule ( keys %{ $conf->{LogDispatch} } )
+        {
 
             load $log_dispatch_submodule;
 
             my $logger = $log_dispatch_submodule->new(
-                %{$conf->{LogDispatch}->{$log_dispatch_submodule}}
-            );
+                %{ $conf->{LogDispatch}->{$log_dispatch_submodule} } );
             $self->handle->add($logger);
         }
 
-    } else {
+    }
+    else {
         my $path = $app->log->path;
         if ($path) {
             $app->log->debug("Resolved path: $path");
@@ -47,9 +48,12 @@ sub register {
 
     my $log = $self;
     if ($log) {
-        $app->log->info('Instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->handle->outputs);
+        $app->log->info( 'Instantiated LogDispatch outputters: ' . join ',',
+            map { ref $_ } $log->handle->outputs );
     }
-    $app->log->info('Activating instantiated LogDispatch outputters: '. join ',', map { ref $_ } $log->handle->outputs);
+    $app->log->info(
+        'Activating instantiated LogDispatch outputters: ' . join ',',
+        map { ref $_ } $log->handle->outputs );
     $app->log($log);
 
     return;
@@ -70,23 +74,24 @@ __PACKAGE__->attr(
 
         $self->format(
             sub {
-                my ($time, $level, $msg) = @_;
+                my ( $time, $level, $msg ) = @_;
                 my $dt = DateTime->from_epoch( epoch => $time );
 
                 my $day_abbr   = $dt->day_abbr;
-                my $month_abbr = $dt->month_abbr; # Jan, Feb, ...
-                my $day        = $dt->day; 
+                my $month_abbr = $dt->month_abbr;    # Jan, Feb, ...
+                my $day        = $dt->day;
                 my $hms        = $dt->hms;
                 my $year       = $dt->year;
 
-                return "[$day_abbr $month_abbr $day $hms $year] [$level] $msg\n";
+                return
+                    "[$day_abbr $month_abbr $day $hms $year] [$level] $msg\n";
             }
         );
 
         if ( $self->path ) {
-            $self->orig_log->debug("we have a path: ", $self->path);
+            $self->orig_log->debug( "we have a path: ", $self->path );
 
-            # Create a logging object that will log to a file if we have a path
+           # Create a logging object that will log to a file if we have a path
             $dispatcher->add(
                 Log::Dispatch::File->new(
                     'name'      => '_default_log_obj',
@@ -98,8 +103,9 @@ __PACKAGE__->attr(
             );
         }
         else {
-            if ($self->orig_log) {
-                $self->orig_log->debug("we have no path, defaulting to screen");
+            if ( $self->orig_log ) {
+                $self->orig_log->debug(
+                    "we have no path, defaulting to screen");
             }
 
             # Create a logging object that will log to STDERR by default
@@ -113,8 +119,10 @@ __PACKAGE__->attr(
             );
         }
 
-        if ($self->orig_log) {
-            $self->orig_log->debug('returning dispatcher with logging outputters: '. map { ref $_ } $dispatcher->outputs);
+        if ( $self->orig_log ) {
+            $self->orig_log->debug(
+                'returning dispatcher with logging outputters: ' .
+                    map { ref $_ } $dispatcher->outputs );
         }
 
         return $dispatcher;
@@ -124,6 +132,7 @@ __PACKAGE__->attr(
 __PACKAGE__->attr('orig_log');
 __PACKAGE__->attr('callbacks');
 __PACKAGE__->attr('format');
+
 #__PACKAGE__->attr('history'); #TODO
 #__PACKAGE__->attr('message'); #TODO
 #__PACKAGE__->attr('max_history_size'); #TODO
@@ -148,15 +157,15 @@ sub log {
     return $self unless $level && $self->is_level($level);
 
     my @formatted_msgs = ();
-    my $format_cb = $self->format();
+    my $format_cb      = $self->format();
 
     if ($format_cb) {
         foreach my $msg (@msgs) {
-            push @formatted_msgs, &{$format_cb}(time(), $level, $msg);
+            push @formatted_msgs, &{$format_cb}( time(), $level, $msg );
         }
     }
 
-    if (scalar @formatted_msgs) {
+    if ( scalar @formatted_msgs ) {
         @msgs = @formatted_msgs;
     }
     $self->handle->log( 'level' => $level, 'message' => @msgs );
@@ -164,8 +173,9 @@ sub log {
     return $self;
 }
 
-sub remove         { return shift->handle->remove(@_) }
-sub output         { 
+sub remove { return shift->handle->remove(@_) }
+
+sub output {
     my $self = shift;
 
     my $output = $self->handle->output(@_);
@@ -181,40 +191,40 @@ sub log_and_croak  { return shift->handle->log_and_croak(@_) }
 # log methods
 
 sub emergency { shift->log( 'emergency', @_ ) }
-sub emerg { shift->emergency( @_ ) }
+sub emerg { shift->emergency(@_) }
 
-sub alert     { shift->log( 'alert',     @_ ) }
+sub alert { shift->log( 'alert', @_ ) }
 
-sub fatal     { 
+sub fatal {
     my $self = shift;
-    return $self->critical( @_ );
+    return $self->critical(@_);
 }
 
-sub critical  { shift->log( 'critical',  @_ ) }
-sub crit      { shift->critical( @_ ) }
+sub critical { shift->log( 'critical', @_ ) }
+sub crit { shift->critical(@_) }
 
-sub error     {
+sub error {
     my $self = shift;
-    return $self->log( 'error', @_ ) 
+    return $self->log( 'error', @_ );
 }
-sub err       { shift->error(@_ ) }
+sub err { shift->error(@_) }
 
-sub warning   {
+sub warning {
     my $self = shift;
 
-    return $self->log( 'warning', @_ )     
+    return $self->log( 'warning', @_ );
 }
-sub warn      { shift->warning(@_) }
+sub warn { shift->warning(@_) }
 
-sub notice    { shift->log( 'notice',    @_ ) }
+sub notice { shift->log( 'notice', @_ ) }
 
-sub info      {
+sub info {
     my $self = shift;
 
     return $self->log( 'info', @_ );
 }
 
-sub debug     {
+sub debug {
     my $self = shift;
 
     return $self->log( 'debug', @_ );
@@ -233,23 +243,23 @@ sub is_level {
 sub is_emergency { shift->is_level('emergency') }
 sub is_emerg     { shift->is_level('emergency') }
 
-sub is_alert     { shift->is_level('alert') }
+sub is_alert { shift->is_level('alert') }
 
-sub is_fatal     { shift->is_level('critical') }
-sub is_critical  { shift->is_level('critical') }
-sub is_crit      { shift->is_level('critical') }
+sub is_fatal    { shift->is_level('critical') }
+sub is_critical { shift->is_level('critical') }
+sub is_crit     { shift->is_level('critical') }
 
-sub is_error     { shift->is_level('error') }
-sub is_err       { shift->is_level('error') }
+sub is_error { shift->is_level('error') }
+sub is_err   { shift->is_level('error') }
 
-sub is_warning   { shift->is_level('warning') }
-sub is_warn      { shift->is_level('warning') }
+sub is_warning { shift->is_level('warning') }
+sub is_warn    { shift->is_level('warning') }
 
-sub is_notice    { shift->is_level('notice') }
+sub is_notice { shift->is_level('notice') }
 
-sub is_info      { shift->is_level('info') }
+sub is_info { shift->is_level('info') }
 
-sub is_debug     { shift->is_level('debug') }
+sub is_debug { shift->is_level('debug') }
 
 1;
 

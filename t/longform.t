@@ -10,8 +10,8 @@ use lib "$FindBin::Bin/../lib";
 plugin 'Mojolicious::Plugin::LogDispatch';
 
 get '/' => sub {
-  my $self = shift;
-  $self->render(text => 'Hello Mojo!');
+    my $self = shift;
+    $self->render( text => 'Hello Mojo!' );
 };
 
 my $t = Test::Mojo->new;
