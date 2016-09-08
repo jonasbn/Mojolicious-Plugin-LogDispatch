@@ -428,41 +428,6 @@ depicted in the below figure:
 
 =end markdown
 
-=begin html
-
-<table>
-<tr>
-    <th>Mojo::Log</th><th>Log::Dispatch</th><th>Syslog</th>
-</tr>
-<tr>
-    <td>&nbsp;</td><td>emergency</td><td>emerg</td>
-</tr>
-<tr>
-    <td>&nbsp;</td><td>alert</td><td>alert</td>
-</tr>
-<tr>
-    <td>fatal</td><td>critical</td><td>crit</td>
-</tr>
-<tr>
-    <td>error</td><td>error</td><td>err</td>
-</tr>
-<tr>
-    <td>warn</td><td>warning</td><td>warning</td>
-</tr>
-<tr>
-    <td>&nbsp;</td><td>notice</td><td>notice</td>
-</tr>
-<tr>
-    <td>info</td><td>info</td><td>info</td>
-</tr>
-<tr>
-    <td>debug</td><td>debug</td><td>debug</td>
-</tr>
-</table>
-
-=end html
-
-
 =head1 SUBROUTINES/METHODS
 
 L<Mojolicious::Plugin::LogDispatch> inherits all methods from
