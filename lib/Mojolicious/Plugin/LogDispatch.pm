@@ -171,17 +171,9 @@ sub log {
         #}
     }
 
-    #if ( scalar @formatted_msgs ) {
-    #    @msgs = @formatted_msgs;
-    #}
-
     if ($formatted_msg) {
         $msg = $formatted_msg;
     }
-
-    #use Data::Dumper;
-    #print STDERR "#############################################################\n";
-    #print STDERR Dumper \@msgs;
 
     $self->handle->log( 'level' => $level, 'message' => $msg );
 
@@ -226,10 +218,6 @@ sub err { shift->error(@_) }
 
 sub warning {
     my $self = shift;
-
-    use Data::Dumper;
-    print STDERR "#############################################################\n";
-    print STDERR Dumper \@_;
 
     return $self->log( 'warning', @_ );
 }
