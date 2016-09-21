@@ -234,7 +234,7 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
         "Log::Dispatch::Output callbacks to reverse and uppercase text" );
 }
 
-# test level paramter to callbacks
+# test level parameter to callbacks
 {
     my $level = sub { my %p = @_; return uc $p{level}; };
 
