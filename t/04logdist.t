@@ -272,6 +272,23 @@ ok( $dispatch, "created Mojolicious::Plugin::LogDispatch object" );
         "nomama output should not exist" );
 }
 
+# Log multiple elements
+{
+    my $dispatch = Mojolicious::Plugin::LogDispatch->new;
+
+    my $string;
+    $dispatch->add( Log::Dispatch::String->new( name => 'bar',
+                                                string => \$string,
+                                                min_level => 'warning',
+                                                max_level => 'alert',
+                                                stderr => 0 ) );
+    $dispatch->format( sub { my ($time, $level, $msg) = @_; return $msg } );
+
+    $dispatch->warn( 'beware', 'I told you',  'not to stare' );
+
+    is( $string, 'beware I told you not to stare' );
+}
+
 done_testing();
 
 package Log::Dispatch::String;

@@ -154,23 +154,36 @@ sub add {
 sub log {
     my ( $self, $level, @msgs ) = @_;
 
+    my $msg = join ' ', @msgs;
+
     # Check log level
     $level = lc $level;
     return $self unless $level && $self->is_level($level);
 
-    my @formatted_msgs = ();
+    #my @formatted_msgs = ();
+    my $formatted_msg;
     my $format_cb      = $self->format();
 
     if ($format_cb) {
-        foreach my $msg (@msgs) {
-            push @formatted_msgs, &{$format_cb}( time(), $level, $msg );
-        }
+        #foreach my $msg (@msgs) {
+            #push @formatted_msgs, &{$format_cb}( time(), $level, $msg );
+            my $formatted_msg, &{$format_cb}( time(), $level, $msg );
+        #}
     }
 
-    if ( scalar @formatted_msgs ) {
-        @msgs = @formatted_msgs;
+    #if ( scalar @formatted_msgs ) {
+    #    @msgs = @formatted_msgs;
+    #}
+
+    if ($formatted_msg) {
+        $msg = $formatted_msg;
     }
-    $self->handle->log( 'level' => $level, 'message' => @msgs );
+
+    #use Data::Dumper;
+    #print STDERR "#############################################################\n";
+    #print STDERR Dumper \@msgs;
+
+    $self->handle->log( 'level' => $level, 'message' => $msg );
 
     return $self;
 }
@@ -213,6 +226,10 @@ sub err { shift->error(@_) }
 
 sub warning {
     my $self = shift;
+
+    use Data::Dumper;
+    print STDERR "#############################################################\n";
+    print STDERR Dumper \@_;
 
     return $self->log( 'warning', @_ );
 }
