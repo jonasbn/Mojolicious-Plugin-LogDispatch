@@ -83,6 +83,8 @@ __PACKAGE__->attr(
                 my $hms        = $dt->hms;
                 my $year       = $dt->year;
 
+                $msg = $msg // '';
+
                 return
                     "[$day_abbr $month_abbr $day $hms $year] [$level] $msg";
             }
