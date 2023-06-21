@@ -12,5 +12,5 @@ on 'test' => sub {
     requires 'Test::Kwalitee', '1.21';    # from Dist::Zilla
     requires 'Test::Pod',      '1.52';    # from Dist::Zilla
     requires 'Pod::Coverage::TrustPod';   # from Dist::Zilla
-    requires 'Test::Pod::Coverage', '1.08';    # from Dist::Zilla
+    requires 'Test::Pod::Coverage', '1.10';    # from Dist::Zilla
 };
