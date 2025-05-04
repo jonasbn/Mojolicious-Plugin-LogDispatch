@@ -8,7 +8,7 @@ on 'test' => sub {
     requires 'File::Temp';
     requires 'FindBin';
     requires 'Test::Mojo';
-    requires 'Test::More',     '1.302210';
+    requires 'Test::More',     '1.302211';
     requires 'Test::Kwalitee', '1.28';    # from Dist::Zilla
     requires 'Test::Pod',      '1.52';    # from Dist::Zilla
     requires 'Pod::Coverage::TrustPod';   # from Dist::Zilla
